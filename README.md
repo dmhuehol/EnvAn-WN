@@ -6,6 +6,7 @@ Repository contains functions and scripts in MATLAB used to analyze atmospheric 
 Short descriptions of files:
 
 Working:
+
 FWOKXh6: current (5/26/17) version of MATLAB script to process soundings and surface observations data, and produce a variety of data visualizations. Refers to several of the functions in this repository. (Based on a script originally written by Megan Amanatides at NC State)
 
 FWOKXskew: current (5/24/17) version of MATLAB function to create a skew-T chart given information from a soundings structure. (Adapted from code originally found at MIT OpenCourseware)
