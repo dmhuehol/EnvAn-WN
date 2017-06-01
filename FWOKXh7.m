@@ -5,7 +5,7 @@
 %pressure and temperature v height space. Additionally, it processes
 %surface conditions data which can be used to reference surface
 %conditions with the corresponding soundings data.
-%Version: 5/31/17
+%Version: 6/1/17
 %Last major edit: 5/31/17
 %Written by: Daniel Hueholt, North Carolina State University
 %Undergraduate Research Assistant at Environment Analytics
@@ -42,9 +42,11 @@ surfcon.temp = 6;
 [gooddays,goodfinal] = surfconfilter(soundsh,surfcon);
 
 disp('Quality control complete! 4/8')
-current = toc
 
-disp('Warmnose detection complete! 5/8')
+[warmnosesfinal,nowarmnosesfinal] = noseplotfind(goodfinal,1,length(goodfinal),-1,-1,0.5,20000);
+
+disp('Warmnose detection and soundings plots complete! 5/8')
+current = toc;
 %% Plotting heights
 
 % Plot the height (in mb) of lowest lower bounds
@@ -160,7 +162,7 @@ for f = 1:length(warmnosesfinal)
         plot(f,warmnosesfinal(f).warmnose.lowerboundg1,'*')
         plot(f,warmnosesfinal(f).warmnose.lowerboundg2,'*')
         plot(f,warmnosesfinal(f).warmnose.lowerboundg3,'*')
-        %this plot shows ALL lower bounds (km), allowing multiple poits per
+        %this plot shows ALL lower bounds (km), allowing multiple points per
         %sounding in case of multiple warmnoses
     end
 end

@@ -1035,4 +1035,3 @@ surdat15 = ('C:\Users\danielholt\Documents\MATLAB\Project 1 - Warm Noses\Surface
 disp('Surface conditions import complete! 8/8')
 
 totime = toc
-end

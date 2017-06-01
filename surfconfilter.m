@@ -19,7 +19,8 @@
 %4 deg C and all humidity below 80%, surfcon should be created using
 %commands surfcon.temp = 4;surfcon.relative_humidity=80
 %
-%Version date: 5/31/17
+%Version date: 6/1/17
+%Last major revision: 5/31/17
 %Based on a section of a script originally written by Megan Amanatides at
 %NC State
 %Written by: Daniel Hueholt
@@ -63,7 +64,7 @@ for d = 1:length(soundsh) %loop through sounding
             end
         else
             if check(1,2) == 1 %this message should only display once
-                disp('No relative humidity filtration was applied.')
+                disp('No relative humidity filter was applied.')
                 check(1,2) = 0;
             end
             moist(d) = 1; %add entry in logical for final filtration

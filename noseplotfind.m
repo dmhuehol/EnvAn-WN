@@ -1,15 +1,58 @@
-%Version Date: 5/31/17
+%%noseplotfind--function to plot TvP, Tvz, and skew-T charts of soundings
+%data. Additionally, divides the given sounding structure into two
+%output structures, one of which contains those soundings with warmnoses 
+%(including statistics and information regarding the warmnose),
+%the other one which contains soundings without warmnoses. noseplotfind
+%allows for a great deal of control over its figures and calculations; see
+%the discussion of inputs for a full understanding.
+%
+%General form: [warmnosesfinal,nowarmnosesfinal] = noseplotfind(soundstruct,first,last,newfig,skewT,freezeT,top)
+%
+%Outputs:
+%warmnosesfinal: sounding structure containing the soundings with
+%   warmnoses, as well as a nested structure with information about the warmnose(s).
+%nowarmnosesfinal: sounding structure containing the soundings without warmnoses.
+%
+%Inputs:
+%soundstruct: soundings data structure
+%first: first soundings number wanted
+%last: last soundings number wanted
+%newfig: controls whether plots are opened on individual figures or overwrite
+%   the previous figure. 0 for overwrite option, 1 for individual figures, all
+%   other options suppress plotting entirely.
+%skewT: controls whether skewT chart is loaded. 0 or 1 will load skewT, all
+%   other options will suppress it.
+%freezeT: value of freezing line; when temperature profile crosses this line it
+%   is considered a warmnose. Default value is 0.5, see Yuter et al. (2006).
+%top: highest pressure level/height considered, default value is 200mb (which 
+%   corresponds to a geopotential height of roughly 15km.)
+%
+%
+%The biggest advantage of noseplotfind over soundplots is the stars on the
+%plot which denote the presence of warmnoses. Also, noseplotfind is easy to
+%run in a large loop, such as 1:length(goodfinal). soundplots is, however,
+%easier to use. If only the data import function of noseplotfind is
+%desired, use nosedetect instead.
+%
+%Version Date: 6/1/17
+%Last major edit: 6/1/17
 %Written by: Daniel Hueholt
+%North Carolina State University
+%Undergraduate Research Assistant at Environment Analytics
 %To be added: rhumvP, rhumvz, skew-T new figure plotting, switch to control
 %presence of P subplot
-function [] = noseplot(soundstruct,first,last,newfig,skewT,freezeT,top)
+%
+%See also: IGRAimpf, nosedetect, soundplots
+%
+
+function [warmnosesfinal,nowarmnosesfinal] = noseplotfind(soundstruct,first,last,newfig,skewT,freezeT,top)
 warmnose = zeros(length(soundstruct),1); %preallocation
-x = zeros(length(soundstruct),1); %preallocation
-y = zeros(length(soundstruct),1); %preallocation
 
 %for creation of a freezing line in the plots (see within the loop)
 if ~exist('freezeT','var')
-    freezeT = -0.2; %set default value of freezing temperature to -0.2 deg C
+    freezeT = 0.5; %set default value of freezing temperature to 0.5 deg C
+    %rationale: Yuter et al. (2006)
+    %(http://www4.ncsu.edu/~seyuter/pdfs/yuteretal2006JAMC.pdf)
 end
 
 freezingx = 0:1200;
@@ -33,8 +76,13 @@ for e = first:last
     mbtop = find(soundstruct(e).pressure >= top); %find indices of readings where the pressure is greater than 20000 Pa
     presheight = soundstruct(e).pressure(mbtop); %select readings greater than 20000 Pa
     goodtemp = soundstruct(e).temp(mbtop); %temperatures from surface to 200mb
-    
-    [presheightvector,geoheightvector] = prestogeo(presheight,goodtemp,1,soundstruct,e); %call to prestogeo to calculate geopotential heights
+    try %very rarely, this hiccups due to major recording errors in a sounding
+        [presheightvector,geoheightvector] = prestogeo(presheight,goodtemp,1,soundstruct,e); %call to prestogeo to calculate geopotential heights
+    catch ME
+        continue %prevents this from stopping the run
+    end
+    %Quality control - remove 9999 entries 
+    goodtemp(goodtemp==-999.9) = NaN;
     
     %find missing values in pressure levels, geopotential heights, and temperatures
     presheightnans = isnan(presheightvector);
@@ -58,6 +106,10 @@ for e = first:last
     [x,y] = polyxpoly(presheightvector,goodtemp,freezingx,freezingy);
     [gx,gy] = polyxpoly(geoheightvector,goodtemp,freezingx,freezingy);
    
+    if numel(x)~=numel(gx) %very rarely, there will be a mismatch in the number of warmnoses calculated by pressure and calculated by height, usually because of extremely shallow warmnoses at the base
+        continue %if this is the case, skip and move on to the next sounding
+    end
+
     if numel(x)==1
         x1 = x(1); %PRESSURE
         y1 = y(1);
@@ -82,7 +134,7 @@ for e = first:last
                 g2 = subplot(1,2,2);
                 plot(goodtemp,geoheightvector,freezingyg,freezingxg,'r',gy1,gx1,'*')
             otherwise
-                disp('Plotting disabled!')
+                %disp('Plotting disabled!')
         end
         elseif numel(x)==2
         x1 = x(1);
@@ -107,7 +159,7 @@ for e = first:last
                 g2 = subplot(1,2,2);
                 plot(goodtemp,geoheightvector,freezingyg,freezingxg,'r',gy1,gx1,'*',gy2,gx2,'*')
             otherwise
-                disp('Plotting disabled')
+                %disp('Plotting disabled')
         end
     elseif numel(x)==3
         x1 = x(1);
@@ -136,7 +188,7 @@ for e = first:last
                 g2 = subplot(1,2,2);
                 plot(goodtemp,geoheightvector,freezingyg,freezingxg,'r',gy1,gx1,'*',gy2,gx2,'*',gy3,gx3,'*')
             otherwise
-                disp('Plotting disabled!')
+                %disp('Plotting disabled!')
         end
     elseif numel(x)==4
         x1 = x(1);
@@ -169,7 +221,7 @@ for e = first:last
                 g2 = subplot(1,2,2);
                 plot(goodtemp,geoheightvector,freezingyg,freezingxg,'r',gy1,gx1,'*',gy2,gx2,'*',gy3,gx3,'*',gy4,gx4,'*')
             otherwise
-                disp('Plotting disabled!')
+                %disp('Plotting disabled!')
         end
     elseif numel(x)==5
         x1 = x(1);
@@ -206,7 +258,7 @@ for e = first:last
                 g2 = subplot(1,2,2);
                 plot(goodtemp,geoheightvector,freezingyg,freezingxg,'r',gy1,gx1,'*',gy2,gx2,'*',gy3,gx3,'*',gy4,gx4,'*',gy5,gx5,'*')
             otherwise
-                disp('Plotting disabled!')
+                %disp('Plotting disabled!')
         end
     elseif numel(x)==6
         x1 = x(1);
@@ -247,7 +299,7 @@ for e = first:last
                 g2 = subplot(1,2,2);
                 plot(goodtemp,geoheightvector,freezingyg,freezingxg,'r',gy1,gx1,'*',gy2,gx2,'*',gy3,gx3,'*',gy4,gx4,'*',gy5,gx5,'*',gy6,gx6,'*')
             otherwise
-                disp('Plotting disabled!')
+                %disp('Plotting disabled!')
         end
     elseif isempty(x)==1
         switch newfig
@@ -259,17 +311,18 @@ for e = first:last
                 g2 = subplot(1,2,2);
                 plot(goodtemp,geoheightvector,freezingyg,freezingxg,'r')
             case 0
-                f20303 = figure(e);
+                f20303 = figure(20303);
                 g = subplot(1,2,1);
                 plot(goodtemp,presheightvector,freezingy,freezingx,'r')
                 g2 = subplot(1,2,2);
                 plot(goodtemp,geoheightvector,freezingyg,freezingxg,'r')
+                xlim([-80 15])
             otherwise
                 %disp('No warmnose!')
-                disp('Plotting disabled')
+                %disp('Plotting disabled')
         end
     else
-        disp('Error!')
+        %disp('Error!')
     end
     if newfig==1 || newfig == 0
         hold off
@@ -295,10 +348,10 @@ for e = first:last
         case 0
             [f9999] = FWOKXskew(soundstruct(e).rhum,soundstruct(e).temp,soundstruct(e).pressure,soundstruct(e).temp-soundstruct(e).dew_point_dep); %uncomment this line for skew-T plotting
         otherwise
-            disp('Skew-T plotting disabled!')
+            %disp('Skew-T plotting disabled!')
     end
     hold off
-    geoheightvector = []; %clear geoheightvector, otherwise old indices will hang around
+    
     soundstruct(e).warmnose.lclheight = (0.125.*(soundstruct(e).dew_point_dep(1))); %find the LCL in km
     soundstruct(e).warmnose.maxtemp = max(goodtemp); %find maximum temperature (corresponding to warm nose in pressure coordinates)
     soundstruct(e).warmnose.geotemp = max(goodtemp); %find maximum temperature (corresponding to warm nose in geopotential height coordinates)

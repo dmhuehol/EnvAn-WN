@@ -1,8 +1,0 @@
-%%simple_prestogeo -- function to quickly calculate the thickness of a
-%%level
-
-function [geoheight] = simple_prestogeo(p1,pz,t1,tz)
-R = 287.75; %J/(K*kg) ideal gas constant
-grav = 9.81; %m/s^2 acceleration of gravity
-geoheight = (R/grav*(((t1+273.15)+(tz+273.15))/2).*log(p1./pz))/1000; %equation comes from Durre and Yin (2008) http://journals.ametsoc.org/doi/pdf/10.1175/2008BAMS2603.1
-end
