@@ -2,8 +2,14 @@
 %Based on the "FIND_WarmnoseOKX" script originally created by Megan
 %Amanatides, this script uses soundings data to identify profiles with
 %"warm noses." It then visualizes the data in both temperature v
-%pressure and temperature v height space.
+%pressure and temperature v height space. Additionally, it processes
+%surface conditions data which can be used to reference surface
+%conditions with the corresponding soundings data.
 %Version: 5/26/17
+%
+%See also: IGRAimpf, dewrelh, findsnd, levfilters, SkewT, soundplots,
+%wnumport, yearfilterfs
+%
 tic
 
 addpath('C:\Users\danielholt\Documents\MATLAB\Project 1 - Warm Noses\Soundings Data\Upton') %add path which contains soundings data
@@ -1029,3 +1035,4 @@ surdat15 = ('C:\Users\danielholt\Documents\MATLAB\Project 1 - Warm Noses\Surface
 disp('Surface conditions import complete! 8/8')
 
 totime = toc
+end

@@ -6,7 +6,11 @@
 %concatenated into an IGRA soundings data structure (such as that created
 %by IGRAimpf) by the user.
 %Written by: Daniel Hueholt
-%Version date: 5/26/17
+%Version date: 5/31/17 - THIS IS STILL UNFINISHED. Original use for this
+%was unnecessary, and while I'll finish this eventually, it's no longer
+%particularly important.
+%
+%
 %
 
 addpath('C:\Users\danielholt\Documents\MATLAB\Project 1 - Warm Noses\Soundings Data\Upton') %add path which contains soundings data
@@ -74,5 +78,28 @@ for klasudi = 1:r-1 %r-1 thanks to feof
     end
     %disp(header{klasudi,4}{1})
 end
+kasi = cell2table(headert,'VariableNames',{'Hour', 'Day', 'Month', 'Year'})
 
-time = [2002,1,13,12]
+datevect = [12,2,1,2002]; %input vector: a release time/day/month/year stamp
+cdate = num2cell(datevect); %convert to cell
+validdate = cellfun(@(x) num2str(x),cdate,'UniformOutput',false); %convert to strings within cell; now can check equality with headers
+
+[rind1,~] = find(strcmp(kasi.Hour(:),validdate{1})==1); %first find indices where the hour is equal to input hour
+[
+
+%replace improperly-sized hours with properly-sized replacements to allow
+%for cell2mat later
+[r0,~] = find(strcmp(kasi.Hour(:),'0')==1);
+[r6,~] = find(strcmp(kasi.Hour(:),'6')==1);
+[r1,~] = find(strcmp(kasi.Hour(:),'1')==1);
+
+kasi.Hour(r0) = strrep(kasi.Hour(r0),'0','00');
+kasi.Hour(r1) = strrep(kasi.Hour(r1),'1','01');
+kasi.Hour(r6) = strrep(kasi.Hour(r6),'6','06');
+
+[pind1,~] = find(strcmp(kasi.Hour(:),validdate(1))==1) %find all soundings released at the hour of datevec
+
+%headdate = {header{1,1}{1},header{1,2}{1},header{1,3}{1},headert{1,4}{1}}
+
+
+

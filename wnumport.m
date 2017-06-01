@@ -22,7 +22,7 @@
 %conditions, 0 will leave them as numerical codes
 %
 %Written by: Daniel Hueholt
-%Version date: 5/25/2017
+%Version date: 5/31/2017
 
 function [dat,decoded] = wnumport(input_file,todecode)
 
@@ -284,6 +284,7 @@ elseif todecode == 0
 elseif ~exist(todecode) %if todecode hasn't been entered
     disp('todecode must be 1 or 0') %there are only two options
 end
+dat.valid_date_num = [dat.Year,dat.Month,dat.Day,dat.Hour];
 
 end
 
