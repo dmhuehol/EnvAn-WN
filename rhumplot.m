@@ -12,9 +12,10 @@
 %snum: a sounding number (sounding number for a specific date can be found
 %   using findsnd or soundplots)
 %sounding: a soundings data structure
+%trz: logical to show a figure with subplots for Tvz and RHvz
 %
-%Version Date: 6/1/17
-%Last major revision: 6/1/17
+%Version Date: 6/2/17
+%Last major revision: 6/2/17
 %Written by: Daniel Hueholt
 %North Carolina State University
 %Undergraduate Researcher at Environment Analytics
@@ -22,7 +23,16 @@
 %See also: soundplots, findsnd, IGRAimpf, ESRLn
 %
 
-function [LCL] = rhumplot(snum,sounding)
+function [LCL] = rhumplot(snum,sounding,trz)
+if ~exist('trz','var')
+    trz = 1; %assume trz on
+end
+
+freezingx = 0:1200;
+freezingy = ones(1,length(freezingx)).*0.5;
+freezingxg = 0:16;
+freezingyg = ones(1,length(freezingxg)).*0.5;
+
 [r,~] = size(sounding); %find the number of soundings
 if r==1 %if it's oriented the other way
     [~,r] = size(sounding); %find it this way instead
@@ -103,6 +113,8 @@ title(g,['Sounding for ' datenum])
 title(g2,['Sounding for ' datenum])
 xlabel(g,'Relative Humidity in %')
 xlabel(g2,'Relative Humidity in %')
+xlim(g,[-2 102])
+xlim(g2,[-2 102])
 ylabel(g,'Pressure in mb')
 ylabel(g2,'Height in km')
 set(g,'YDir','reverse');
@@ -110,4 +122,27 @@ ylim(g,[200 nanmax(presheightvector)]);
 ylim(g2,[0 13]);
 set(g2,'yaxislocation','right')
 hold off
+
+if trz == 1
+    f92301 = figure(92031); %new figure
+    g3 = subplot(1,2,1); %subplot right
+    plot(geotemp,geoheightvector,freezingyg,freezingxg,'r') %Tvz
+    g4 = subplot(1,2,2)
+    plot(rhum,geoheightvector) %RHvz
+    datenum = num2str(sounding(snum).valid_date_num);
+    title(g3,['Sounding for ' datenum])
+    title(g4,['Sounding for ' datenum])
+    xlabel(g3,'Temperature (deg C)')
+    xlabel(g4,'Relative Humidity (%)')
+    ylabel(g3,'Height (km)')
+    ylabel(g4,'Height (km)')
+    ylim(g3,[0 13]);
+    ylim(g4,[0 13]);
+    xlim(g4,[-2,102])
+    set(g4,'yaxislocation','right')
+    hold off
+else
+    suppressant = 'shh';
+end
+
 end

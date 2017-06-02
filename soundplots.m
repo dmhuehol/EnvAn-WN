@@ -8,8 +8,8 @@
 %generates a skew-T, a zT and a PT plot of the sounding
 %Inputs: y (4-digit year), m (2 digit month), d (2 digit day), t (either 00
 %or 12), sounding (a sounding data structure).
-%Version date: 6/1/17
-%Last major edit: 6/1/17
+%Version date: 6/2/17
+%Last major edit: 6/2/17
 %Written by: Daniel Hueholt
 %
 %See also: dewrelh
@@ -91,9 +91,9 @@ sounding(foundit).temp(sounding(foundit).temp<-150) = NaN;
 
 %freezing lines for Tvz and TvP charts
 freezingx = 0:1200;
-freezingy = ones(1,length(freezingx)).*-0.2;
+freezingy = ones(1,length(freezingx)).*0.5;
 freezingxg = 0:16;
-freezingyg = ones(1,length(freezingxg)).*-0.2;
+freezingyg = ones(1,length(freezingxg)).*0.5;
 
 %plotting
 f9034 = figure(9034); %new figure
