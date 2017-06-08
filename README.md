@@ -9,7 +9,7 @@ Working:
 
 FWOKXh6: current (5/26/17) version of MATLAB script to process soundings and surface observations data, and produce a variety of data visualizations. Refers to several of the functions in this repository. (Based on a script originally written by Megan Amanatides at NC State)
 
-FWOKXh7: current (6/1/17) version of the FWOKXh line of sounding processing and analysis scripts. This is the first one to head towards the eventual goal of offloading most of the functionality into the auxiliary functions, which are called within this script. Updated 6/1/17 to further move towards this goal.
+FWOKXh7: current (6/8/17) version of the FWOKXh line of sounding processing and analysis scripts. This is the first one to head towards the eventual goal of offloading most of the functionality into the auxiliary functions, which are called within this script. Updated 6/8/17 with small changes, mostly just fiddly test things to make wnlocplot work.
 
 dewrelh: current (5/31/17) version of MATLAB function to calculate dewpoint and relative humidity from temperature and dewpoint depression.
 
@@ -44,12 +44,15 @@ yearfilterfs: current (5/19/17) version of MATLAB function to filter out years f
 
 In progress:
 
-noseplot: SEE NOSEPLOTFIND
-
-noseplotfind: current (6/1/17) version of MATLAB function to detect and display warmnoses. Currently displays TvP, Tvz, and skew-T charts, and splits the sounding data structure into warmnose and nonwarmnose versions. See "to be added" section near end of help for features which will be added in the near future.
+atplot: currently (6/8/17) just a grab bag of plotting loops, originally from FWOKXh7. May be removed eventually, but currently serves as a testing ground for improvements and functionalizations of the remaining plotting sections of FWOKXh7.
 
 convection: current (5/31/17) version of MATLAB function to find relevant meteorological variables necessary to calculate basic properties relevant to convection and stability. Currently just a skeleton of code from Megan Amanatides's original script.
 
+IGRAimpfil: current (6/8/17) version of MATLAB function to import IGRA v1 data and output ALL useful sounding structures (filtered, goodfinal, and warmnosesfinal being the most important). Still needs to be commented.
+
+noseplotfind: current (6/1/17) version of MATLAB function to detect and display warmnoses. Currently displays TvP, Tvz, and skew-T charts, and splits the sounding data structure into warmnose and nonwarmnose versions. See "to be added" section near end of help for features which will be added in the near future.
+
+wnlocplot: current (6/8/17) version of MATLAB function to display the physical locations (vertically) of warmnoses within the atmosphere. Displays bars representing the upper bound/lower bound/thickness of warmnoses, given a sounding structure containing only warmnose data. Generates four figures: one which displays from left to right bars representing first, second, and third warmnoses; one which displays only the first warmnose (usually a grounded warmnose); one which displays only the second warmnose (always a warmnose aloft); one which displays the third warmnose; and one which displays all three warmnoses superimposed in a single plot. Lots of functionality is still to be added, and documentation is only half complete.
 
 Nonfunctional:
 
