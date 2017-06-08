@@ -48,10 +48,10 @@ disp('Quality control complete! 4/8')
 disp('Warmnose detection and soundings plots complete! 5/8')
 current = toc;
 %% Plotting heights
-
 % Plot the height (in mb) of lowest lower bounds
 f1 = figure(1); %PRESSURE figures are numbered from 1
 for f = 1:length(warmnosesfinal)
+    try
     if length(warmnosesfinal(f).warmnose.x) == 1
         plot(f,warmnosesfinal(f).warmnose.lowerbound1,'*')
         title('Lower Bound of Lowest Warm Nose - P')
@@ -72,6 +72,9 @@ for f = 1:length(warmnosesfinal)
         plot(f,warmnosesfinal(f).warmnose.lowerbound1,'*')
         %the idea for this figure is to plot the lowest bound (mb), regardless
         %of the number of warmnoses
+    end
+    catch ME;
+        continue
     end
 end
 hold off

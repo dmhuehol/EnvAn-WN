@@ -50,8 +50,7 @@ warmnose = zeros(length(soundstruct),1); %preallocation
 
 %for creation of a freezing line in the plots (see within the loop)
 if ~exist('freezeT','var')
-    freezeT = 0.5; %set default value of freezing temperature to 0.5 deg C
-    %rationale: see Yuter et al. (2006): http://www4.ncsu.edu/~seyuter/pdfs/yuteretal2006JAMC.pdf
+    freezeT = 0; %set default value of freezing temperature to 0 deg C
 end
 
 freezingx = 0:1200; %for pressure
@@ -263,6 +262,9 @@ for k = first:last
             soundstruct(k).warmnose.gdepth3 = soundstruct(k).warmnose.upperboundg3 - soundstruct(k).warmnose.lowerboundg3; %HEIGHT depth of highest warmnose
         else
             soundstruct(k).warmnose.numwarmnose = NaN; %situations with any more than six warmnoses are discarded as instrument error
+            soundstruct(k).warmnose.x = NaN; %but still need x and gx entries or loops using this code will choke
+            soundstruct(k).warmnose.gx = NaN;
+            soundstruct(k).warmnose.lowerbound = NaN;
         end
     end
 end

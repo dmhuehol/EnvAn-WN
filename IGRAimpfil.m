@@ -15,7 +15,7 @@ soundsh = soundsh';
 
 %call function to add dewpoint and temperature
 for scnt  = 1:length(soundsh)
-[soundsh(scnt).dewpt,soundsh(scnt).rhum] = dewrelh(soundsh(scnt).temp,soundsh(scnt).dew_point_dep)
+[soundsh(scnt).dewpt,soundsh(scnt).rhum] = dewrelh(soundsh(scnt).temp,soundsh(scnt).dew_point_dep);
 end
 
 %call function to filter by surface temperature
@@ -24,7 +24,7 @@ surfcon.temp = 6;
 
 disp('Quality control complete! 4/8')
 
-[~,~,~,warmnosesfinal,nowarmnosesfinal,~,~,~,~,~,~,~,~] = nosedetect(goodfinal,1,length(goodfinal),0.5,20000)
+[~,~,~,warmnosesfinal,nowarmnosesfinal,~,~,~,~,~,~,~,~] = nosedetect(goodfinal,1,length(goodfinal),0.5,20000);
 
 disp('Warmnose detection and soundings plots complete! 5/8')
 disp(toc);
