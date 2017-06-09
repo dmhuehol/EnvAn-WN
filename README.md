@@ -48,11 +48,11 @@ atplot: currently (6/8/17) just a grab bag of plotting loops, originally from FW
 
 convection: current (5/31/17) version of MATLAB function to find relevant meteorological variables necessary to calculate basic properties relevant to convection and stability. Currently just a skeleton of code from Megan Amanatides's original script.
 
-IGRAimpfil: current (6/8/17) version of MATLAB function to import IGRA v1 data and output ALL useful sounding structures (filtered, goodfinal, and warmnosesfinal being the most important). Still needs to be commented.
+IGRAimpfil: current (6/9/17) version of MATLAB function to import IGRA v1 data and output ALL useful sounding structures (filtered, goodfinal, and warmnosesfinal being the most important). Still needs to be commented. Updated 6/9/17 with minor changes to progress indicators.
 
 noseplotfind: current (6/1/17) version of MATLAB function to detect and display warmnoses. Currently displays TvP, Tvz, and skew-T charts, and splits the sounding data structure into warmnose and nonwarmnose versions. See "to be added" section near end of help for features which will be added in the near future.
 
-wnlocplot: current (6/8/17) version of MATLAB function to display the physical locations (vertically) of warmnoses within the atmosphere. Displays bars representing the upper bound/lower bound/thickness of warmnoses, given a sounding structure containing only warmnose data. Generates four figures: one which displays from left to right bars representing first, second, and third warmnoses; one which displays only the first warmnose (usually a grounded warmnose); one which displays only the second warmnose (always a warmnose aloft); one which displays the third warmnose; and one which displays all three warmnoses superimposed in a single plot. Lots of functionality is still to be added, and documentation is only half complete.
+wnlocplot: current (6/9/17) version of MATLAB function to display the physical locations (vertically) of warmnoses within the atmosphere. Displays bars representing the upper bound/lower bound/thickness of warmnoses, given a sounding structure containing only warmnose data. Major update on 6/9/17 adds several more figures, ability to plot by year, full commenting, and help; see program help for more details. Further updates will likely include plotting of cloud base, different x-axis on figures, and cross-referencing of surface observations data.
 
 Nonfunctional:
 
