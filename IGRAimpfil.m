@@ -4,13 +4,13 @@ input_file = 'C:\Users\danielholt\Documents\MATLAB\Project 1 - Warm Noses\Soundi
 
 [sndng] = IGRAimpf(input_file); %read the soundings data into MATLAB; this produces a structure of soundings data
 
-disp('Data import complete! 1/8')
+disp('Data import complete! 1/5')
 
 filter_settings.year = [2002 2016]; %settings to remove all data that does not lie between 2002 and 2016, inclusive
 [filtered] = yearfilterfs(sndng,filter_settings); %create a new table with only the data needed
-disp('Time filtering complete! 2/8')
+disp('Time filtering complete! 2/5')
 [soundsh] = levfilters(filtered,3); %remove all data with level type 3 (corresponding to extra wind layers, which throw off geopotential height and other variables)
-disp('Level filtering complete! 3/8')
+disp('Level filtering complete! 3/5')
 soundsh = soundsh';
 
 %call function to add dewpoint and temperature
@@ -22,10 +22,11 @@ end
 surfcon.temp = 6;
 [gooddays,goodfinal] = surfconfilter(soundsh,surfcon);
 
-disp('Quality control complete! 4/8')
+disp('Quality control complete! 4/5')
 
+disp('Detecting warmnoses - please be patient!')
 [~,~,~,warmnosesfinal,nowarmnosesfinal,~,~,~,~,~,~,~,~] = nosedetect(goodfinal,1,length(goodfinal),0.5,20000);
 
-disp('Warmnose detection and soundings plots complete! 5/8')
+disp('Warmnose detection and soundings plots complete! 5/5')
 disp(toc);
 end
