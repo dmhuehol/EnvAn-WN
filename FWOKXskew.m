@@ -1,33 +1,34 @@
-%% FWOKXskew
-%Function to create a skew-T graph when given column vectors of relative
-%humidity, temperature, and pressure.
-%
-%General form: [f] = FWOKXskew(RELH,TEMP,PRES,DEW)
-%
-%Outputs: f is the figure handle for the skew-T chart
-%Inputs: RELH is humidity data in percent, TEMP is temperature in deg C, PRES
-%is pressure in Pa, and DEW is dewpoint in deg C
-%All other thermodynamic variables needed are calculated within the
-%function. Additionally, units are adjusted from the above as necessary
-%within the function.
-%
-%Description of graph:
-%solid black line: measured temperature profile, deg C
-%dashed black line: measured dewpoint profile, deg C
-%horizontal thin dashed line: isobars (lines of constant pressure)
-%solid black line slanted right: isotherms (lines of constant temperature)
-%solid magenta line slanted right: freezing isotherm (line of 0 deg C temperature)
-%blue curved line: dry adiabat (lines of constant potential temperature)
-%red curved line: saturated adiabat (lines of constant potential temperature)
-%green slanted line: isohume (lines of constant mixing ratio)
-%
-%Written by: Daniel Hueholt
-%Adapted from code found on MIT Open Courseware, ocw.mit.edu
-%Version date: 5/24/17
-%
-%See also: IGRAimpf, FWOKXh4
-
 function [f] = FWOKXskew(RELH,TEMP,PRES,DEW)
+%%FWOKXskew
+    %Function to create a skew-T graph when given column vectors of relative
+    %humidity, temperature, and pressure.
+    %
+    %General form: [f] = FWOKXskew(RELH,TEMP,PRES,DEW)
+    %
+    %Outputs: f is the figure handle for the skew-T chart
+    %Inputs: RELH is humidity data in percent, TEMP is temperature in deg C, PRES
+    %is pressure in Pa, and DEW is dewpoint in deg C
+    %All other thermodynamic variables needed are calculated within the
+    %function. Additionally, units are adjusted from the above as necessary
+    %within the function.
+    %
+    %Description of graph:
+    %solid black line: measured temperature profile, deg C
+    %dashed black line: measured dewpoint profile, deg C
+    %horizontal thin dashed line: isobars (lines of constant pressure)
+    %solid black line slanted right: isotherms (lines of constant temperature)
+    %solid magenta line slanted right: freezing isotherm (line of 0 deg C temperature)
+    %blue curved line: dry adiabat (lines of constant potential temperature)
+    %red curved line: saturated adiabat (lines of constant potential temperature)
+    %green slanted line: isohume (lines of constant mixing ratio)
+    %
+    %Written by: Daniel Hueholt
+    %Adapted from code found on MIT Open Courseware, ocw.mit.edu
+    %Version date: 6/13/17
+    %Last major revision: 5/24/17
+    %
+    %See also: IGRAimpf, FWOKXh7
+
 PRES = PRES/100; %change Pa to hPa for charting
 RHUM = RELH./100; %express relative humidity as decimal instead of percentage
 ez=6.112.*exp(17.67.*TEMP./(243.5+TEMP)); %calculate saturation vapor pressure

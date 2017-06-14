@@ -1,15 +1,16 @@
-%%yearfilterfs: Function to filter a soundings data structure (as created by
-%the IGRAimpf function). Given a soundings data structure and a 1x1 structure containing
-%a span of years as input, yearfilterf will destroy all data within the
-%structure that lies outside of the given year range. yearfilterf returns a
-%structure identical to the original table in format, except that the requested
-%data has been removed.
-%
-%General form: [sounding] = yearfilterf(sounding,filter_settings)
-%
-%See also IGRAimpf
-
 function [sounding] = yearfilterfs(sding,filter_settings)
+%%yearfilterfs
+    %function to filter a soundings data structure (as created by
+    %the IGRAimpf function). Given a soundings data structure and a 1x1 structure containing
+    %a span of years as input, yearfilterf will destroy all data within the
+    %structure that lies outside of the given year range. yearfilterf returns a
+    %structure identical to the original table in format, except that the requested
+    %data has been removed.
+    %
+    %General form: [sounding] = yearfilterf(sounding,filter_settings)
+    %   
+    %See also IGRAimpfil
+
 soundingt = struct2table(sding);
 low = filter_settings.year(1,1); %lower bound
 high = filter_settings.year(1,2); %upper bound

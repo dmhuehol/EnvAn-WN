@@ -1,34 +1,34 @@
-%%findsnd - function to find the index of a sounding given a specific date.
-%
-%General form: [numdex] = findsnd(y,m,d,h,sndstructure,sndstructure2,sndstructure3)
-%
-%Output:
-%numdex: the index within the structure (sndstructure) where the input date
-%is found.
-%
-%Inputs:
-%y: a 4-digit year
-%m: a 1 or 2-digit month
-%d: a 1 or 2-digit day
-%h: a 1 or 2-digit time
-%sndstructure: a structure of soundings data
-%Up to two additional soundings structures can be input; numdex will
-%contain as many indices as there are soundings, and will display NaN for
-%structures where the date is not present.
-%
-%NOTE: If inputting a table, input with table2struct(input). Full table
-%support will be added later.
-%
-%Version Date: 6/1/17
-%Last major revision: 5/31/17
-%Written by: Daniel Hueholt
-%North Carolina State University
-%Undergraduate Research Assistant at Environment Analytics
-%
-%See also FWOKXh6
-%
-
 function [numdex] = findsnd(y,m,d,h,sndstructure,sndstructure2,sndstructure3)
+%%findsnd
+    %Function to find the index of a sounding given a specific date.
+    %
+    %General form: [numdex] = findsnd(y,m,d,h,sndstructure,sndstructure2,sndstructure3)
+    %
+    %Output:
+    %numdex: the index within the structure (sndstructure) where the input date
+    %is found.
+    %
+    %Inputs:
+    %y: a 4-digit year
+    %m: a 1 or 2-digit month
+    %d: a 1 or 2-digit day
+    %h: a 1 or 2-digit time
+    %sndstructure: a structure of soundings data
+    %Up to two additional soundings structures can be input; numdex will
+    %contain as many indices as there are soundings, and will display NaN for
+    %structures where the date is not present.
+    %
+    %NOTE: If inputting a table, input with table2struct(input). Full table
+    %support will be added later.
+    %
+    %Version Date: 6/1/17
+    %Last major revision: 5/31/17
+    %Written by: Daniel Hueholt
+    %North Carolina State University
+    %Undergraduate Research Assistant at Environment Analytics
+    %
+    %See also FWOKXh6
+    %
 
 datenumber = [y,m,d,h]; %concatenate into a datenumber
 
@@ -98,7 +98,8 @@ switch nargin
 end
 
 if ~exist('numdex','var') %if after switch/case there still is no numdex
-    disp('The input time was not found in the structure!')
+    disp('The input time was not found in the structure(s)!')
+    return
 end
 
 numdex(numdex==0) = NaN; %any 0 entries should be NaN to be clearer that the index is not present in the respective structure

@@ -1,58 +1,60 @@
-%%noseplotfind--function to plot TvP, Tvz, and skew-T charts of soundings
-%data. Additionally, divides the given sounding structure into two
-%output structures, one of which contains those soundings with warmnoses 
-%(including statistics and information regarding the warmnose),
-%the other one which contains soundings without warmnoses. noseplotfind
-%allows for a great deal of control over its figures and calculations; see
-%the discussion of inputs for a full understanding.
-%
-%General form: [warmnosesfinal,nowarmnosesfinal] = noseplotfind(soundstruct,first,last,newfig,skewT,freezeT,top)
-%
-%Outputs:
-%warmnosesfinal: sounding structure containing the soundings with
-%   warmnoses, as well as a nested structure with information about the warmnose(s).
-%nowarmnosesfinal: sounding structure containing the soundings without warmnoses.
-%
-%Inputs:
-%soundstruct: soundings data structure
-%first: first soundings number wanted
-%last: last soundings number wanted
-%newfig: controls whether plots are opened on individual figures or overwrite
-%   the previous figure. 0 for overwrite option, 1 for individual figures, all
-%   other options suppress plotting entirely.
-%skewT: controls whether skewT chart is loaded. 0 or 1 will load skewT, all
-%   other options will suppress it.
-%freezeT: value of freezing line; when temperature profile crosses this line it
-%   is considered a warmnose. Default value is 0.5, see Yuter et al. (2006).
-%top: highest pressure level/height considered, default value is 200mb (which 
-%   corresponds to a geopotential height of roughly 15km.)
-%
-%
-%The biggest advantage of noseplotfind over soundplots is the stars on the
-%plot which denote the presence of warmnoses. Also, noseplotfind is easy to
-%run in a large loop, such as 1:length(goodfinal). soundplots is, however,
-%easier to use. If only the data import function of noseplotfind is
-%desired, use nosedetect instead.
-%
-%Version Date: 6/1/17
-%Last major edit: 6/1/17
-%Written by: Daniel Hueholt
-%North Carolina State University
-%Undergraduate Research Assistant at Environment Analytics
-%To be added: rhumvP, rhumvz, skew-T new figure plotting, switch to control
-%presence of P subplot
-%
-%See also: IGRAimpf, nosedetect, soundplots
-%
-
-function [warmnosesfinal,nowarmnosesfinal] = noseplotfind(soundstruct,first,last,newfig,skewT,freezeT,top)
-warmnose = zeros(length(soundstruct),1); %preallocation
+function [] = noseplotfind(soundstruct,first,last,newfig,skewT,freezeT,top)
+%%noseplotfind
+    %function to plot TvP, Tvz, and skew-T charts of soundings
+    %data. noseplotfind allows for a great deal of control over its figures
+    %and calculations; see the discussion of inputs for a full understanding.
+    %
+    %General form: noseplotfind(soundstruct,first,last,newfig,skewT,freezeT,top)
+    %
+    %Outputs:
+    %none
+    %
+    %Inputs:
+    %soundstruct: soundings data structure
+    %first: first soundings number wanted
+    %last: last soundings number wanted
+    %newfig: controls whether plots are opened on individual figures or overwrite
+    %   the previous figure. 0 for overwrite option, 1 for individual figures, all
+    %   other options suppress plotting entirely.
+    %skewT: controls whether skewT chart is loaded. 0 or 1 will load skewT, all
+    %   other options will suppress it.
+    %freezeT: value of freezing line; when temperature profile crosses this line it
+    %   is considered a warmnose. Default value is 0.
+    %top: highest pressure level/height considered, default value is 200mb (which 
+    %   corresponds to a geopotential height of roughly 15km.)
+    %
+    %
+    %The biggest advantage of noseplotfind over soundplots is the stars on the
+    %plot which denote the presence of warmnoses, and the easy ability to plot 
+    %soundings for a span of time. soundplots is, however, easier to use for
+    %single soundings.
+    %
+    %Updated 6/14/17 to remove the data analysis functionality (splitting
+    %into warmnosesfinal and nowarmnosesfinal, etc) which has now been
+    %completely folded into nosedetect.
+    %
+    %Version Date: 6/14/17
+    %Last major edit: 6/14/17
+    %Written by: Daniel Hueholt
+    %North Carolina State University
+    %Undergraduate Research Assistant at Environment Analytics
+    %To be added: rhumvP, rhumvz, skew-T new figure plotting, switch to control
+    %presence of P subplot
+    %
+    %See also: IGRAimpf, nosedetect, soundplots
+    %
 
 %for creation of a freezing line in the plots (see within the loop)
 if ~exist('freezeT','var')
-    freezeT = 0.5; %set default value of freezing temperature to 0.5 deg C
-    %rationale: Yuter et al. (2006)
-    %(http://www4.ncsu.edu/~seyuter/pdfs/yuteretal2006JAMC.pdf)
+    freezeT = 0; %set default value of freezing temperature to 0 deg C
+end
+
+%to make running without entering all the inputs easier
+if ~exist('newfig','var')
+    newfig = 0;
+end
+if ~exist('skewT','var')
+    skewT = -1;
 end
 
 freezingx = 0:1200;
@@ -356,165 +358,5 @@ for e = first:last
     soundstruct(e).warmnose.maxtemp = max(goodtemp); %find maximum temperature (corresponding to warm nose in pressure coordinates)
     soundstruct(e).warmnose.geotemp = max(goodtemp); %find maximum temperature (corresponding to warm nose in geopotential height coordinates)
   
-    if isempty(x) %if x is empty, then there isn't a warm nose
-        warmnose(e) = 0; %set index within warmnose to logical false
-        %xintersect(e) = NaN; %xintersect does not exist
-        soundstruct(e).warmnose.numwarmnose = 0; %and the warmnose entry within goodfinal is blank
-    else %in ANY other circumstance, there is at least one warmnose
-        warmnose(e) = 1;
-        if length(x) == 1
-            soundstruct(e).warmnose.x = x; %PRESSURE x value from polyxpoly
-            soundstruct(e).warmnose.gx = gx; %HEIGHT x value from polyxpoly
-            soundstruct(e).warmnose.numwarmnose = 1; %number of warm nose is one; since the T profile only crosses the freezing line once, it is implied that it is in contact with the ground
-            soundstruct(e).warmnose.lowerbound1 = presheightvector(1); %PRESSURE lower bound (this is the lowest pressure reading)
-            soundstruct(e).warmnose.lowerboundg1 = geoheightvector(1); %HEIGHT lower bound (this is the lowest height reading)
-            soundstruct(e).warmnose.upperbound1 = x(1); %PRESSURE upper bound (this is the pressure level where the T profile crosses the freezing line)
-            soundstruct(e).warmnose.upperboundg1 = gx(1); %HEIGHT upper bound (this is the height where the T profile crosses the freezing line)
-            soundstruct(e).warmnose.lower(1) = presheightvector(1); %PRESSURE
-            soundstruct(e).warmnose.lowerg(1) = geoheightvector(1); %HEIGHT
-            soundstruct(e).warmnose.upper(1) = x(1); %PRESSURE
-            soundstruct(e).warmnose.upperg(1) = gx(1); %HEIGHT (these second instances form a matrix of the lower/upper bounds, providing an easier way to see this information)
-            soundstruct(e).warmnose.depth1 = soundstruct(e).warmnose.lowerbound1 - soundstruct(e).warmnose.upperbound1; %PRESSURE depth calculation; pressure decreases with height so this is lower minus upper
-            soundstruct(e).warmnose.gdepth1 = soundstruct(e).warmnose.upperboundg1 - soundstruct(e).warmnose.lowerboundg1; %HEIGHT depth calculation; height increases with height so this is upper minus lower
-        elseif length(x) == 2
-            soundstruct(e).warmnose.x = x; %PRESSURE x value from polyxpoly
-            soundstruct(e).warmnose.gx = gx; %HEIGHT x value from polyxpoly
-            soundstruct(e).warmnose.numwarmnose = 1; %number of warm nose is one; since the T profile crosses the freezing line twice, it can be inferred that it is aloft
-            soundstruct(e).warmnose.lowerbound1 = x(2); %PRESSURE lower bound
-            soundstruct(e).warmnose.lowerboundg1 = gx(1); %HEIGHT lower bound; note that the indices are reversed because pressure decreases with height and height increases with height
-            soundstruct(e).warmnose.upperbound1 = x(1); %PRESSURE upper bound
-            soundstruct(e).warmnose.upperboundg1 = gx(2); %HEIGHT upper bound
-            soundstruct(e).warmnose.lower(1) = x(2);
-            soundstruct(e).warmnose.lowerg(1) = gx(1);
-            soundstruct(e).warmnose.upper(1) = x(1);
-            soundstruct(e).warmnose.upperg(1) = gx(2);
-            soundstruct(e).warmnose.depth1 = soundstruct(e).warmnose.lowerbound1 - soundstruct(e).warmnose.upperbound1; %PRESSURE depth calculation; pressure decreases with height so this is lower minus upper
-            soundstruct(e).warmnose.gdepth1 = soundstruct(e).warmnose.upperboundg1 - soundstruct(e).warmnose.lowerboundg1; %HEIGHT depth calculation; height increases with height so this is upper minus lower
-        elseif length(x) == 3
-            soundstruct(e).warmnose.x = x; %PRESSURE x value from polyxpoly
-            soundstruct(e).warmnose.gx = gx; %HEIGHT x value from polyxpoly
-            soundstruct(e).warmnose.numwarmnose = 2; %number of warm noses is two; since the T profile crosses the freezing line three times, it is clear that both a warmnose aloft and a warmnose in contact with the ground are present
-            soundstruct(e).warmnose.lowerbound1 = presheightvector(1); %PRESSURE lower bound; this is the lowest pressure reading (since there is a warmnose at ground level)
-            soundstruct(e).warmnose.lowerboundg1 = geoheightvector(1); %HEIGHT lower bound; this is the lowest height reading
-            soundstruct(e).warmnose.upperbound1 = x(3); %PRESSURE upper bound of grounded warmnose
-            soundstruct(e).warmnose.upperboundg1 = gx(1); %HEIGHT upper bound of grounded warmnose
-            soundstruct(e).warmnose.upperbound2 = x(1); %PRESSURE upper bound of warmnose aloft
-            soundstruct(e).warmnose.upperboundg2 = gx(3); %HEIGHT upper bound of warmnose aloft
-            soundstruct(e).warmnose.lowerbound2 = x(2); %PRESSURE lower bound of warmnose aloft
-            soundstruct(e).warmnose.lowerboundg2 = gx(2); %HEIGHT lower bound of warmnose aloft
-            soundstruct(e).warmnose.lower(1) = presheightvector(1); 
-            soundstruct(e).warmnose.lowerg(1) = geoheightvector(1);
-            soundstruct(e).warmnose.upper(1) = x(3);
-            soundstruct(e).warmnose.upperg(1) = gx(1);
-            soundstruct(e).warmnose.lower(2) = x(2);
-            soundstruct(e).warmnose.lowerg(2) = gx(2);
-            soundstruct(e).warmnose.upper(2) = x(1);
-            soundstruct(e).warmnose.upperg(2) = gx(3);
-            soundstruct(e).warmnose.depth1 = soundstruct(e).warmnose.lowerbound1 - soundstruct(e).warmnose.upperbound1; %PRESSURE depth of grounded warmnose is lower minus upper
-            soundstruct(e).warmnose.gdepth1 = soundstruct(e).warmnose.upperboundg1 - soundstruct(e).warmnose.lowerboundg1; %HEIGHT depth of grounded warmnose is upper minus lower
-            soundstruct(e).warmnose.depth2 = soundstruct(e).warmnose.lowerbound2 - soundstruct(e).warmnose.upperbound2; %PRESSURE depth of warmnose aloft is lower minus upper
-            soundstruct(e).warmnose.gdepth2 = soundstruct(e).warmnose.upperboundg2 - soundstruct(e).warmnose.lowerboundg2; %HEIGHT depth of warmnose aloft is upper minus lower
-        elseif length(x) == 4
-            soundstruct(e).warmnose.x = x; %PRESSURE x value from polyxpoly
-            soundstruct(e).warmnose.gx = gx; %HEIGHT x value from polyxpoly
-            soundstruct(e).warmnose.numwarmnose = 2; %number of warm noses is two; since the T profile croses the freezing line four times, it is clear that there are two warmnoses aloft
-            soundstruct(e).warmnose.upperbound1 = x(3); %PRESSURE upper bound of lowest warmnose aloft
-            soundstruct(e).warmnose.upperboundg1 = gx(2); %HEIGHT upper bound of lowest warmnose aloft
-            soundstruct(e).warmnose.lowerbound1 = x(4); %PRESSURE lower bound of lowest warmnose aloft
-            soundstruct(e).warmnose.lowerboundg1 = gx(1); %HEIGHT lower bound of lowest warmnose aloft
-            soundstruct(e).warmnose.upperbound2 = x(1); %PRESSURE upper bound of highest warmnose aloft
-            soundstruct(e).warmnose.upperboundg2 = gx(4); %HEIGHT upper bound of highest warmnose aloft
-            soundstruct(e).warmnose.lowerbound2 = x(2); %PRESSURE lower bound of highest warmnose aloft
-            soundstruct(e).warmnose.lowerboundg2 = gx(3); %HEIGHT lower bound of highest warmnose aloft
-            soundstruct(e).warmnose.lower(1) = x(4);
-            soundstruct(e).warmnose.lowerg(1) = gx(1);
-            soundstruct(e).warmnose.upper(1) = x(3);
-            soundstruct(e).warmnose.upperg(1) = gx(2);
-            soundstruct(e).warmnose.lower(2) = x(2);
-            soundstruct(e).warmnose.lowerg(2) = gx(3);
-            soundstruct(e).warmnose.upper(2) = x(1);
-            soundstruct(e).warmnose.upperg(2) = gx(4);
-            soundstruct(e).warmnose.depth1 = soundstruct(e).warmnose.lowerbound1 - soundstruct(e).warmnose.upperbound1; %PRESSURE depth of lowest warmnose
-            soundstruct(e).warmnose.gdepth1 = soundstruct(e).warmnose.upperboundg1 - soundstruct(e).warmnose.lowerboundg1; %HEIGHT depth of lowest warmnose
-            soundstruct(e).warmnose.depth2 = soundstruct(e).warmnose.lowerbound2 - soundstruct(e).warmnose.upperbound2; %PRESSURE depth of highest warmnose
-            soundstruct(e).warmnose.gdepth2 = soundstruct(e).warmnose.upperboundg2 - soundstruct(e).warmnose.lowerboundg2; %HEIGHT depth of highest warmnose
-        elseif length(x) == 5
-            soundstruct(e).warmnose.x = x; %PRESSURE x from polyxpoly
-            soundstruct(e).warmnose.gx = gx; %HEIGHT x from polyxpoly
-            soundstruct(e).warmnose.numwarmnose = 3; %number of warmnoses is three; since T profile crosses freezing line 5 times there are two warmnoses aloft and a grounded warmnose present
-            soundstruct(e).warmnose.lowerbound1 = presheightvector(1); %PRESSURE lower bound of grounded warmnose
-            soundstruct(e).warmnose.lowerboundg1 = geoheightvector(1); %HEIGHT lower bound of grounded warmnose
-            soundstruct(e).warmnose.upperbound1 = x(5); %PRESSURE upper bound of grounded warmnose
-            soundstruct(e).warmnose.upperboundg1 = gx(1); %HEIGHT upper bound of grounded warmnose
-            soundstruct(e).warmnose.upperbound2 = x(3); %PRESSURE upper bound of lowest warmnose aloft
-            soundstruct(e).warmnose.upperboundg2 = gx(3); %HEIGHT upper bound of lowest warmnose aloft
-            soundstruct(e).warmnose.lowerbound2 = x(4); %PRESSURE lower bound of lowest warmnose aloft
-            soundstruct(e).warmnose.lowerboundg2 = gx(2); %HEIGHT lower bound of lowest warmnose aloft
-            soundstruct(e).warmnose.upperbound3 = x(1); %PRESSURE upper bound of highest warmnose aloft
-            soundstruct(e).warmnose.upperboundg3 = gx(5); %HEIGHT upper bound of highest warmnose aloft
-            soundstruct(e).warmnose.lowerbound3 = x(2); %PRESSURE lower bound of highest warmnose aloft
-            soundstruct(e).warmnose.lowerboundg3 = gx(4); %HEIGHT lower bound of highest warmnose aloft
-            soundstruct(e).warmnose.lower(1) = presheightvector(1); %disabled for now
-            soundstruct(e).warmnose.lowerg(1) = geoheightvector(1); %hi
-            soundstruct(e).warmnose.upper(1) = x(5);
-            soundstruct(e).warmnose.upperg(1) = gx(1);
-            soundstruct(e).warmnose.lower(2) = x(4);
-            soundstruct(e).warmnose.lowerg(2) = gx(2);
-            soundstruct(e).warmnose.upper(2) = x(3);
-            soundstruct(e).warmnose.upperg(2) = gx(3);
-            soundstruct(e).warmnose.lower(3) = x(2);
-            soundstruct(e).warmnose.lowerg(3) = gx(4);
-            soundstruct(e).warmnose.upper(3) = x(1);
-            soundstruct(e).warmnose.upperg(3) = gx(5);
-            soundstruct(e).warmnose.depth1 = soundstruct(e).warmnose.lowerbound1 - soundstruct(e).warmnose.upperbound1; %PRESSURE depth of grounded warmnose
-            soundstruct(e).warmnose.gdepth1 = soundstruct(e).warmnose.upperboundg1 - soundstruct(e).warmnose.lowerboundg1; %HEIGHT depth of grounded warmnose
-            soundstruct(e).warmnose.depth2 = soundstruct(e).warmnose.lowerbound2 - soundstruct(e).warmnose.upperbound2; %PRESSURE depth of lowest warmnose aloft
-            soundstruct(e).warmnose.gdepth2 = soundstruct(e).warmnose.upperboundg2-soundstruct(e).warmnose.lowerboundg2; %HEIGHT depth of lowest warmnose aloft
-            soundstruct(e).warmnose.depth3 = soundstruct(e).warmnose.lowerbound3 - soundstruct(e).warmnose.upperbound3; %PRESSURE depth of highest warmnose aloft
-            soundstruct(e).warmnose.gdepth3 = soundstruct(e).warmnose.upperboundg3 - soundstruct(e).warmnose.lowerboundg3; %HEIGHT depth of highest warmnose aloft
-        elseif length(x) == 6
-            soundstruct(e).warmnose.x = x; %PRESSURE x from polyxpoly
-            soundstruct(e).warmnose.gx = gx; %HEIGHT x from polyxpoly
-            soundstruct(e).warmnose.numwarmnose = 3; %number of warmnoses is three; since T profile crosses the freezing line six times there are three warmnoses aloft
-            soundstruct(e).warmnose.upperbound1 = x(5); %PRESSURE upper bound of lowest warmnose aloft
-            soundstruct(e).warmnose.upperboundg1 = gx(2); %HEIGHT upper bound of lowest warmnose aloft
-            soundstruct(e).warmnose.lowerbound1 = x(6); %PRESSURE lower bound of lowest warmnose aloft
-            soundstruct(e).warmnose.lowerboundg1 = gx(1); %HEIGHT lower bound of lowest warmnose aloft
-            soundstruct(e).warmnose.upperbound2 = x(3); %PRESSURE upper bound of middle warmnose aloft
-            soundstruct(e).warmnose.upperboundg2 = gx(4); %HEIGHT upper bound of middle warmnose aloft
-            soundstruct(e).warmnose.lowerbound2 = x(4); %PRESSURE lower bound of middle warmnose aloft
-            soundstruct(e).warmnose.lowerboundg2 = gx(3); %HEIGHT lower bound of middle warmnose aloft
-            soundstruct(e).warmnose.upperbound3 = x(1); %PRESSURE upper bound of highest warmnose aloft
-            soundstruct(e).warmnose.upperboundg3 = gx(6); %HEIGHT upper bound of highest warmnose aloft
-            soundstruct(e).warmnose.lowerbound3 = x(2); %PRESSURE lower bound of highest warmnose aloft
-            soundstruct(e).warmnose.lowerboundg3 = gx(5); %HEIGHT lower bound of highest warmnose aloft
-            soundstruct(e).warmnose.lower(1) = x(6);
-            soundstruct(e).warmnose.lowerg(1) = gx(1);
-            soundstruct(e).warmnose.upper(1) = x(5);
-            soundstruct(e).warmnose.upperg(1) = gx(2);
-            soundstruct(e).warmnose.lower(2) = x(4);
-            soundstruct(e).warmnose.lowerg(2) = gx(3);
-            soundstruct(e).warmnose.upper(2) = x(3);
-            soundstruct(e).warmnose.upperg(2) = gx(4);
-            soundstruct(e).warmnose.lower(3) = x(2);
-            soundstruct(e).warmnose.lowerg(3) = gx(5);
-            soundstruct(e).warmnose.upper(3) = x(1);
-            soundstruct(e).warmnose.upperg(3) = gx(6);
-            soundstruct(e).warmnose.depth1 = soundstruct(e).warmnose.lowerbound1 - soundstruct(e).warmnose.upperbound1; %PRESSURE depth of lowest warmnose
-            soundstruct(e).warmnose.gdepth1 = soundstruct(e).warmnose.upperboundg1 - soundstruct(e).warmnose.lowerboundg1; %HEIGHT depth of lowest warmnose
-            soundstruct(e).warmnose.depth2 = soundstruct(e).warmnose.lowerbound2 - soundstruct(e).warmnose.upperbound2; %PRESSURE depth of middle warmnose
-            soundstruct(e).warmnose.gdepth2 = soundstruct(e).warmnose.upperboundg2 - soundstruct(e).warmnose.lowerboundg2; %HEIGHT depth of middle warmnose
-            soundstruct(e).warmnose.depth3 = soundstruct(e).warmnose.lowerbound3 - soundstruct(e).warmnose.upperbound3; %PRESSURE depth of highest warmnose
-            soundstruct(e).warmnose.gdepth3 = soundstruct(e).warmnose.upperboundg3 - soundstruct(e).warmnose.lowerboundg3; %HEIGHT depth of highest warmnose
-        else
-            soundstruct(e).warmnose.numwarmnose = NaN; %situations with any more than six warmnoses are discarded as instrument error
-        end
-    end
 end
-
-warmnoses = logical(warmnose); %find all of the indices where warmnoses actually exist
-warmnosesfinal = soundstruct(warmnoses); %create a structure that contains only the warmnose soundings
-       
-nowarmnoses = ~logical(warmnose); %also create a structure that contains the quality-controlled soundings sans warmnoses
-nowarmnosesfinal = soundstruct(nowarmnoses);
 end

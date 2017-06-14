@@ -26,8 +26,12 @@
 %North Carolina State University
 %Undergraduate Research Assistant at Environment Analytics
 %
+%NOTE: As of 6/12/17, wnlocplot is DEFUNCT and has been superseded by
+%wnaltplot, which uses stacked bars instead of boxplot. This implementation
+%is quicker and does not require the use of the Statistics toolbox. No
+%further development will take place on wnlocplot.
 %
-%See also IGRAimpfil
+%See also wnaltplot, IGRAimpfil
 %
 
 function [sounding,vnum] = wnlocplot(sounding,year,simple)

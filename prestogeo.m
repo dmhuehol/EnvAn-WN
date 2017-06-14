@@ -1,46 +1,48 @@
-%%prestogeo--function to calculate geopotential height given pressure and
-%temperature, with options to replace the first height with measured data.
-%Technically, prestogeo actually calculates the geopotential thickness of a layer,
-%but is calculating the layer from the surface to the given level, whose thickness
-%is the geopotential height of the given pressure level tz. prestogeo was
-%designed for use with the FWOKXh[v] line of scripts, and thus includes a
-%few otherwise largely extraneous settings making it easier to use for that
-%purpose. If you, the reader, is looking for a more basic geopotential height calculator,
-%see simple_prestogeo.
-%
-%General form: [presheightvector,geoheightvector] = prestogeo(pressure,temperature,replacefirst,soundstructure,soundingnumber)
-%
-%Outputs:
-%presheightvector: vector of pressures converted from input of Pa to output of hPa (mb).
-%geoheightvector: vector of calculated geopotential heights (with first replaced as requested based on 
-%   value of replacefirst, see below) in kilometers.
-%
-%Inputs:
-%pressure: vector of pressure data in Pa (conversion to hPa is built-in)
-%temperature: vector of temperature data in deg C (conversion to K is built-in)
-%replacefirst: logical value which controls whether the first value in geoheight vector is replaced with 
-%   measured value or not. The first value is always calculated to be 0km, so the first measured value 
-%   (when present) is more accurate, especially for plotting purposes.
-%soundstructure: sounding structure which provides the first geopotential height value for replacefirst. 
-%    DO NOT ENTER unless looking to use the replacefirst functionality.
-%soundingnumber: number of requested sounding, provided so that the proper measured first value can be
-%    found within the sounding structure. DO NOT ENTER unless looking to use the replacefirst functionality.
-%talk: logical value which controls whether prestogeo reports the progress of geopotential height calculations
-%    in the command window. 1 for verbose, 0 for quiet.
-%
-%Note: a switch statement is used to ensure that prestogeo will complete even with input variables missing. 
-%   replacefirst, soundstructure, and soundingnumber can be left off of any calls to prestogeo without 
-%   impairing the function at all. The only inputs which are essential are pressure and temperature.
-%
-%Version Date: 5/31/17
-%Written by: Daniel Hueholt
-%North Carolina State University
-%Undergraduate Research Assistant at Environment Analytics
-%
-%See also simple_prestogeo, FWOKXh7
-%
-
 function [presheightvector,geoheightvector] = prestogeo(pressure,temperature,replacefirst,soundstructure,soundingnumber,talk)
+%%prestogeo
+    %function to calculate geopotential height given pressure and
+    %temperature, with options to replace the first height with measured data.
+    %Technically, prestogeo actually calculates the geopotential thickness of a layer,
+    %but is calculating the layer from the surface to the given level, whose thickness
+    %is the geopotential height of the given pressure level tz. prestogeo was
+    %designed for use with the FWOKXh[v] line of scripts, and thus includes a
+    %few otherwise largely extraneous settings making it easier to use for that
+    %purpose. If you are looking for a more basic geopotential height calculator,
+    %see simple_prestogeo.
+    %
+    %General form: [presheightvector,geoheightvector] = prestogeo(pressure,temperature,replacefirst,soundstructure,soundingnumber)
+    %
+    %Outputs:
+    %presheightvector: vector of pressures converted from input of Pa to output of hPa (mb).
+    %geoheightvector: vector of calculated geopotential heights (with first replaced as requested based on 
+    %   value of replacefirst, see below) in kilometers.
+    %
+    %Inputs:
+    %pressure: vector of pressure data in Pa (conversion to hPa is built-in)
+    %temperature: vector of temperature data in deg C (conversion to K is built-in)
+    %replacefirst: logical value which controls whether the first value in geoheight vector is replaced with 
+    %   measured value or not. The first value is always calculated to be 0km, so the first measured value 
+    %   (when present) is more accurate, especially for plotting purposes.
+    %soundstructure: sounding structure which provides the first geopotential height value for replacefirst. 
+    %    DO NOT ENTER unless looking to use the replacefirst functionality.
+    %soundingnumber: number of requested sounding, provided so that the proper measured first value can be
+    %    found within the sounding structure. DO NOT ENTER unless looking to use the replacefirst functionality.
+    %talk: logical value which controls whether prestogeo reports the progress of geopotential height calculations
+    %    in the command window. 1 for verbose, 0 for quiet.
+    %
+    %Note: a switch statement is used to ensure that prestogeo will complete even with input variables missing. 
+    %   replacefirst, soundstructure, and soundingnumber can be left off of any calls to prestogeo without 
+    %   impairing the function at all. The only inputs which are essential are pressure and temperature.
+    %
+    %Version Date: 6/14/17
+    %Last major revision: 5/31/17
+    %Written by: Daniel Hueholt
+    %North Carolina State University
+    %Undergraduate Research Assistant at Environment Analytics
+    %
+    %See also simple_prestogeo, FWOKXh7
+    %
+
 try %keeps the function from causing hiccups when used in a long loop scenario
     presheightvector = pressure/100; %convert Pa to hPa (mb)
     R = 287.75; %J/(K*kg) ideal gas constant
@@ -50,9 +52,8 @@ try %keeps the function from causing hiccups when used in a long loop scenario
     end
     geoheightvector = geoheightvector'; %make column
     
-    %All of the following has to do with the more convulted uses of input variables
-    %and can be ignored if all you, the user, are looking for is a
-    %geopotential height calculator
+    %All of the following has to do with the more convoluted uses of input variables
+    %and can be ignored if all you are looking for is a geopotential height calculator
     switch nargin %different cases occur with different number of input variables, easier than if/elseif
         case 6 %if all inputs are present
             if replacefirst == 1 %if first calculated value is to be replaced with measured value (calculated value is always zero, so the measurement is more accurate)
@@ -113,6 +114,6 @@ try %keeps the function from causing hiccups when used in a long loop scenario
         otherwise
             disp('Something very strange has happened! Check syntax.')
     end
-catch ME
+catch ME;
 end
 end

@@ -1,4 +1,6 @@
-%levfilters - function to remove levels from a structure of soundings data,
+function [fil] = levfilters(filtered,level_type)
+%%levfilters
+%Function to remove levels from a structure of soundings data,
 %such as that created by IGRAimpf. Given a sounding structure and a level
 %type, levfilters will remove all data from the structure which corresponds
 %to said level.
@@ -9,8 +11,14 @@
 %Usually used to remove additional wind level data (such data that only
 %includes height and wind data) - in this case level_type equals 3.
 %
-%See also IGRAimpf
-function [fil] = levfilters(filtered,level_type)
+%Written by Daniel Hueholt
+%North Carolina State University
+%Undergraduate Research Assistant at Environment Analytics
+%Version Date: 6/13/17
+%
+%See also IGRAimpf, IGRAimpfil
+%
+
 fil = filtered; %structure to be targeted
 [r,~] = size(fil); %find number of soundings
 for t = 1:r %loop through structure

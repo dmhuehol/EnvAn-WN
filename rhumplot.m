@@ -1,37 +1,38 @@
-%%rhumplot--function to generate figure with charts of relative humidity vs pressure
-%and relative humidity vs height, given a sounding number and a sounding
-%data structure. Note that this functionality is also present alongside T
-%and skew-T plotting in the soundplots function; this should be used if
-%only a relative humidity plot is wanted.
-%
-%General form: [LCL] = rhumplot(snum,sounding)
-%Outputs:
-%LCL - estimated level of cloud base
-%
-%Inputs:
-%snum: a sounding number (sounding number for a specific date can be found
-%   using findsnd or soundplots)
-%sounding: a soundings data structure
-%trz: logical to show a figure with subplots for Tvz and RHvz
-%
-%Version Date: 6/2/17
-%Last major revision: 6/2/17
-%Written by: Daniel Hueholt
-%North Carolina State University
-%Undergraduate Researcher at Environment Analytics
-%
-%See also: soundplots, findsnd, IGRAimpf, ESRLn
-%
-
 function [LCL] = rhumplot(snum,sounding,trz)
+%%rhumplot
+    %function to generate figure with charts of relative humidity vs pressure
+    %and relative humidity vs height, given a sounding number and a sounding
+    %data structure. Note that this functionality is also present alongside T
+    %and skew-T plotting in the soundplots function; this should be used if
+    %only a relative humidity plot is wanted.
+    %
+    %General form: [LCL] = rhumplot(snum,sounding)
+    %Outputs:
+    %LCL - estimated level of cloud base
+    %
+    %Inputs:
+    %snum: a sounding number (sounding number for a specific date can be found
+    %   using findsnd or soundplots)
+    %sounding: a soundings data structure
+    %trz: logical to show a figure with subplots for Tvz and RHvz
+    %
+    %Version Date: 6/14/17
+    %Last major revision: 6/2/17
+    %Written by: Daniel Hueholt
+    %North Carolina State University
+    %Undergraduate Researcher at Environment Analytics
+    %
+    %See also: soundplots, findsnd, IGRAimpf, ESRLn
+    %
+
 if ~exist('trz','var')
     trz = 1; %assume trz on
 end
 
 freezingx = 0:1200;
-freezingy = ones(1,length(freezingx)).*0.5;
+freezingy = ones(1,length(freezingx)).*0;
 freezingxg = 0:16;
-freezingyg = ones(1,length(freezingxg)).*0.5;
+freezingyg = ones(1,length(freezingxg)).*0;
 
 [r,~] = size(sounding); %find the number of soundings
 if r==1 %if it's oriented the other way

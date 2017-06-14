@@ -1,35 +1,37 @@
-%surfconfilter--function to filter a soundings data structure based on the surface
-%temperature and relative humidity. Useful to narrow down soundings to
-%those with precipitation at the surface, or those near freezing.
-%
-%General form: [gooddays,goodfinal] = surfconfilter(soundsh,surfcon)
-%
-%Outputs:
-%gooddays: a logical matrix, where 1 designates those soundings which will
-%be included in the filtered structure and 0 designates those which will be
-%excluded
-%goodfinal: a structure containing soundings data, filtered to exclude
-%those outside of the conditions specified by surfcon
-%
-%Inputs:
-%soundsh: an IGRA v1 soundings data structure
-%surfcon: a structure containing fields (named "temp" and/or
-%"relative_humidity" with a single value which will be used to filter the
-%data in soundsh. For example, if wanting to exclude all temperature above
-%4 deg C and all humidity below 80%, surfcon should be created using
-%commands surfcon.temp = 4;surfcon.relative_humidity=80
-%
-%Version date: 6/1/17
-%Last major revision: 5/31/17
-%Based on a section of a script originally written by Megan Amanatides at
-%NC State
-%Written by: Daniel Hueholt
-%North Carolina State University
-%Undergraduate Research Assistant at Environment Analytics
-%
-%See also IGRAimpf, levfilters, yearfilterfs, IGRAimpf
-%
 function [gooddays,goodfinal] = surfconfilter(soundsh,surfcon)
+%%surfconfilter
+    %function to filter a soundings data structure based on the surface
+    %temperature and relative humidity. Useful to narrow down soundings to
+    %those with precipitation at the surface, or those near freezing.
+    %
+    %General form: [gooddays,goodfinal] = surfconfilter(soundsh,surfcon)
+    %
+    %Outputs:
+    %gooddays: a logical matrix, where 1 designates those soundings which will
+    %be included in the filtered structure and 0 designates those which will be
+    %excluded
+    %goodfinal: a structure containing soundings data, filtered to exclude
+    %those outside of the conditions specified by surfcon
+    %
+    %Inputs:
+    %soundsh: an IGRA v1 soundings data structure
+    %surfcon: a structure containing fields (named "temp" and/or
+    %"relative_humidity" with a single value which will be used to filter the
+    %data in soundsh. For example, if wanting to exclude all temperature above
+    %4 deg C and all humidity below 80%, surfcon should be created using
+    %commands surfcon.temp = 4;surfcon.relative_humidity=80
+    %
+    %Version date: 6/14/17
+    %Last major revision: 5/31/17
+    %Based on a section of a script originally written by Megan Amanatides at
+    %NC State
+    %Written by: Daniel Hueholt
+    %North Carolina State University
+    %Undergraduate Research Assistant at Environment Analytics
+    %
+    %See also IGRAimpf, levfilters, yearfilterfs, IGRAimpf
+    %
+
 %for notices in case of missing surfcon settings
 check(1,1) = 1;
 check(1,2) = 1;
@@ -39,8 +41,7 @@ cold = zeros(length(soundsh),1); %will specify values cold enough
 moist = zeros(length(soundsh),1); %will specify values moist enough
 
 %check values in the structure against surface condition filter settings
-%unfortunately this cannot be vectorized due to the limitations of how
-%MATLAB can deal with structure indexing
+%nested structures mean it's time to get loopy
 for d = 1:length(soundsh) %loop through sounding
     if ~ isempty(soundsh(d)) %if soundsh(d) is occupied
         if ismember('temp',fieldnames(surfcon))==1 %check if temperature filtration was requested
@@ -52,7 +53,7 @@ for d = 1:length(soundsh) %loop through sounding
                 cold(d) = 1; %add entry in logical for final filtration
             end
         else
-            if check(1,1) == 1 %this message should only display once
+            if check(1,1) == 1 %this message should only appear once, not soundsh number of times
                 disp('No temperature filtration was applied')
                 check(1,1) = 0;
             end

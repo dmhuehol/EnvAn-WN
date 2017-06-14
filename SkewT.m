@@ -1,3 +1,4 @@
+function [f9] = SkewT(RELH,TEMP,PRES)
 %% SkewT
 %Function to create a skew-T graph when given column vectors of relative
 %humidity, temperature, and pressure.
@@ -8,10 +9,12 @@
 %All other variables are calculated within the function.
 %
 %Written by: Daniel Hueholt
+%North Carolina State University
+%Undergraduate Research Assistant at Environment Analytics
 %Adapted from code found on MIT Open Courseware, ocw.mit.edu
-%Version date: 5/24/17
+%Version date: 6/14/17
+%Last major revision: 5/24/17
 
-function [f9] = SkewT(RELH,TEMP,PRES)
 f9 = figure(9);
 RHUM = RELH./100; %express relative humidity as decimal instead of percentage
 ez=6.112.*exp(17.67.*TEMP./(243.5+TEMP)); %calculate saturation vapor pressure

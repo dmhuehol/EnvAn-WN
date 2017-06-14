@@ -1,33 +1,37 @@
-%IGRAimpf - function to import IGRA v1 files. Given a .dat file of
-%soundings data, returns a structure ('sndng') which contains the following
-%fields:
-%valid_date_num - a MATLAB date serial number
-%year
-%month
-%day
-%hour
-%level_type - major level type (1 = standard level, 2 = additional thermodynamic, 3 = wind)
-%minor_level_type (1 = surface, 2 = tropopause, 3 = other)
-%pressure (Pascals)
-%geopotential (meters)
-%temp (air temperature, C)
-%dew_point_dep (dewpoint depression, C)
-%wind_dir (wind direction, angular degrees)
-%wind_spd (wind speed, meters/second)
-%u_comp (zonal component of wind, meters/second)
-%v_comp (meridional component of wind, meters/second)
-%geopotential flag (1 = value is within climatological limits based on all years and all days at the station, 2 = value is within A climatological limits and limits based on specifics to the time of year and time of day at the station, 0 = no climatological check)
-%pressure flag (all flags have same meaning)
-%temp_flag
-%
-%General form of function call: [sndng] = IGRAimpf(input_file)
-%where input_file is a string containing the file path of the dat file
-%
-%Function created by Daniel Hueholt
-%Based on a script originally written by Megan Amanatides
-%Version date: 5/19/2017
-
 function [sndng] = IGRAimpf(input_file)
+%IGRAimpf - function to import IGRA v1 files. Given a .dat file of
+    %soundings data, returns a structure ('sndng') which contains the following
+    %fields:
+    %valid_date_num - a MATLAB date serial number
+    %year
+    %month
+    %day
+    %hour
+    %level_type - major level type (1 = standard level, 2 = additional thermodynamic, 3 = wind)
+    %minor_level_type (1 = surface, 2 = tropopause, 3 = other)
+    %pressure (Pascals)
+    %geopotential (meters)
+    %temp (air temperature, C)
+    %dew_point_dep (dewpoint depression, C)
+    %wind_dir (wind direction, angular degrees)
+    %wind_spd (wind speed, meters/second)
+    %u_comp (zonal component of wind, meters/second)
+    %v_comp (meridional component of wind, meters/second)
+    %geopotential flag (1 = value is within climatological limits based on all years and all days at the station, 2 = value is within A climatological limits and limits based on specifics to the time of year and time of day at the station, 0 = no climatological check)
+    %pressure flag (all flags have same meaning)
+    %temp_flag
+    %
+    %General form of function call: [sndng] = IGRAimpf(input_file)
+    %where input_file is a string containing the file path of the dat file
+    %
+    %Function created by Daniel Hueholt
+    %Based on a script originally written by Megan Amanatides
+    %Version date: 6/13/2017
+    %Last major revision: 5/24/17
+    %
+    %See also: IGRAimpfil
+    %
+
 data_for_length = fileread(input_file); %read file into an array of arbitrary size
 count = length(data_for_length(data_for_length == 35)); %finds number of soundings
 clear data_for_length;

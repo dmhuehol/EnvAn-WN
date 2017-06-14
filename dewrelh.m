@@ -1,23 +1,25 @@
-%%dewrelh -- function to calculate dewpoint and relative humidity, given
-%inputs of temperature and dewpoint depression, both in deg C.
-%
-%General form: [dewpoint,relative_humidity] = dewrelh(temp,dpd)
-%
-%Outputs:
-%dewpoint: value or vector of dewpoints (deg C)
-%relative_humidity: value or vector of relative humidity (%)
-%
-%Inputs:
-%temp: value or vector of temperatures. Units must be degrees Celsius!
-%dpd: value or vector of dewpoint depressions. Units must be degrees Celsius!
-%
-%Version date: 5/31/17
-%Written by: Daniel Hueholt
-%North Carolina State University
-%Undergraduate Research Assistant at Environment Analytics
-%
-
 function [dewpoint,relative_humidity] = dewrelh(temp,dpd)
+%%dewrelh
+    %Function to calculate dewpoint and relative humidity, given
+    %inputs of temperature and dewpoint depression, both in deg C.
+    %
+    %General form: [dewpoint,relative_humidity] = dewrelh(temp,dpd)
+    %
+    %Outputs:
+    %dewpoint: value or vector of dewpoints (deg C)
+    %relative_humidity: value or vector of relative humidity (%)
+    %
+    %Inputs:
+    %temp: value or vector of temperatures. Units must be degrees Celsius!
+    %dpd: value or vector of dewpoint depressions. Units must be degrees Celsius!
+    %
+    %Version date: 6/13/17
+    %Last major revision: 5/31/17
+    %Written by: Daniel Hueholt
+    %North Carolina State University
+    %Undergraduate Research Assistant at Environment Analytics
+    %
+
 
 %check for missing inputs, and give appropriate warnings
 if ~exist('temp','var') && ~exist('dpd','var')

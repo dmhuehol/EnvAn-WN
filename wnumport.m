@@ -1,36 +1,42 @@
-%wnumport - function to process surface observation data from the Mesowest
-%dataset. Given a csv data file from Mesowest (usually covering a span of 1
-%month to 1 year), the function will create a data array containing the
-%time (month, day, year, hour, minute) of the observation and the
-%associated weather condition codes, temperature, dewpoint, relative
-%humidity, wind speed, wind direction, pressure, and 1-hour precipitation
-%totals. If todecode input is 1, the weather condition codes are decoded
-%and added to the end of the table.
-%This function will only work if the data has been downloaded with Temperature, 
-%Dew Point, Relative Humidity, Wind Speed, Wind Direction, Pressure, 
-%Precipitation 1hr, and Weather Conditions fields.
-%
-%General form: [dat,decoded] = wnumport(input_file,todecode)
-%
-%Outputs
-%dat: output table with data
-%decoded: decoded weather condition codes
-%
-%Inputs
-%input_file: file path to Mesowest csv data file
-%todecode: input as 1 or 0--1 will cause the function to decode the weather
-%conditions, 0 will leave them as numerical codes
-%
-%Written by: Daniel Hueholt
-%Version date: 5/31/2017
-
 function [dat,decoded] = wnumport(input_file,todecode)
+%%wnumport
+    %function to process surface observation data from the Mesowest
+    %dataset. Given a csv data file from Mesowest (usually covering a span of 1
+    %month to 1 year), the function will create a data array containing the
+    %time (month, day, year, hour, minute) of the observation and the
+    %associated weather condition codes, temperature, dewpoint, relative
+    %humidity, wind speed, wind direction, pressure, and 1-hour precipitation
+    %totals. If todecode input is 1, the weather condition codes are decoded
+    %and added to the end of the table.
+    %This function will only work if the data has been downloaded with Temperature, 
+    %Dew Point, Relative Humidity, Wind Speed, Wind Direction, Pressure, 
+    %Precipitation 1hr, and Weather Conditions fields.
+    %
+    %General form: [dat,decoded] = wnumport(input_file,todecode)
+    %
+    %Outputs
+    %dat: output table with data
+    %decoded: decoded weather condition codes
+    %
+    %Inputs
+    %input_file: file path to Mesowest csv data file
+    %todecode: input as 1 or 0--1 will cause the function to decode the weather
+    %conditions, 0 will leave them as numerical codes
+    %
+    %Written by: Daniel Hueholt
+    %North Carolina State University
+    %Undergraduate Research Assistant at Environment Analytics
+    %Version date: 6/14/2017
+    %Last major revision: 5/31/17
+    %
+    %See also surfconfind
+    %
 
 %% File import
 da = readtable(input_file,'HeaderLines',7); %import csv data file
 try
     warning('off','MATLAB:table:ModifiedVarNames'); %disable MATLAB's warning about modified variable names
-catch ME
+catch ME;
 end
 
 %% Data processing
