@@ -21,7 +21,7 @@ function [numdex] = findsnd(y,m,d,h,sndstructure,sndstructure2,sndstructure3)
     %NOTE: If inputting a table, input with table2struct(input). Full table
     %support will be added later.
     %
-    %Version Date: 6/1/17
+    %Version Date: 6/14/17
     %Last major revision: 5/31/17
     %Written by: Daniel Hueholt
     %North Carolina State University
