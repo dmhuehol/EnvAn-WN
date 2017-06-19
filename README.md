@@ -50,11 +50,15 @@ atplot: currently (6/8/17) just a grab bag of plotting loops, originally from FW
 
 convection: current (5/31/17) version of MATLAB function to find relevant meteorological variables necessary to calculate basic properties relevant to convection and stability. Currently just a skeleton of code from Megan Amanatides's original script.
 
+myupdatefcn: current (6/19/17) version of MATLAB function to provide more useful Data Cursor tooltips in ranged bar figures. This function is used in wnaltplot and wnaltyearplot to display upper and lower bounds along with decoded datenumbers in the Data Cursor tooltip. CURRENTLY NONFUNCTIONAL, as it turns out lower bounds are darn hard to work into this.
+
 noseplotfind: current (6/14/17) version of MATLAB function to detect and display warmnoses. Currently displays TvP, Tvz, and skew-T charts. See "to be added" section near end of help for features which will be added in the near future. Updated 6/14/17 to reflect the complete splitting of warmnose analysis duties to nosedetect, standardize funciton format, and fix freezing temperature.
 
-WarmNoseMain: current (6/14/17) version of MATLAB script where issues with the altitude plots are being worked out. Will be removed once all issues are worked out, and functionality will be folded into wnaltplot.
+WarmNoseMain: current (6/19/17) version of MATLAB script where issues with the altitude plots are being worked out. Will be removed once all issues are worked out, and functionality will be folded into wnaltplot. Currently contains working code for years and totals. Will be removed soon; still in the process of collapsing into wnaltplot and wnaltyearplot.
 
-wnaltplot: current (6/14/17) version of MATLAB function to display the altitudes of the physical locations of the warmnoses within the atmosphere. Basically, creates a ranged bar graph against time to represent the warmnoses, given a sounding structure containing only warmnose data. Future updates will make aesthetic changes to figures, add ability to plot by year, add commenting and help, filtration by month and surface conditions, and plotting of cloud base.
+wnaltplot: current (6/19/17) version of MATLAB function to display the altitudes of the physical locations of the warmnoses within the atmosphere. Basically, creates a ranged bar graph against time to represent the warmnoses, given a sounding structure containing only warmnose data. Future updates will make aesthetic changes to figures, add ability to plot by year, add commenting and help, filtration by month and surface conditions, and plotting of cloud base. Updated 6/19/17 with working year plot, better control of figure creation, better documentation, and an IN-PROGRESS improvement to the tooltip display. Currently does not work because of tooltip display; if this section is commented out, the function can be used normally.
+
+wnaltyearplot: current (6/19/17) version of MATLAB function to display altitudes of physical locations of the warmnoses within the atmosphere. This function is designed to display only figures corresponding to the input year; it is essentially just the year input functionality from wnaltplot. Easier to use if only the year-by-year features from wnaltplot are needed. Needs to be documented. Additionally, tooltips similar to wnaltplot will be added once those are figured out.
 
 Nonfunctional:
 
