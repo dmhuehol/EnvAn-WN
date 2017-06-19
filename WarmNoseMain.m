@@ -1,6 +1,7 @@
 sounding = warmnosesfinal;
 fc = 1; %counter for building an overall array of bounds which cares not for ordinality
 yc = 1; %year counter, prevents an army of zeros
+ecount = 0;
 year = 2010;
 datnum = zeros(length(sounding),4);
 for f = 1:length(sounding) %unfortunately, nested structures means loops are the only option for extracting large quantities of data
@@ -48,6 +49,13 @@ for f = 1:length(sounding) %unfortunately, nested structures means loops are the
     end
     catch ME; %duly noted
         continue %and ignored
+        ecount = ecount+1;
+        disp('If ecount is greater than 10, this data is likely corrupt!')
+        disp(ecount)
+        if ecount>15
+            msg = 'Something is wrong! Either the data is corrupt or the loop is improperly written.'
+            error(msg);
+        end
     end
 end
 
@@ -73,7 +81,7 @@ groundedupper2(1,fco2) = upperboundsg2(1,fco2); %near-grounded upper bounds
 groundedDepth = groundedupper-grounded; %grounded depth
 grounded2Depth = groundedupper2-grounded2; %near-grounded depth
 
-%replace grounded bounds with NaN in original matrix so that numbers stays intact
+%replace grounded bounds with NaN in original matrix so that number of elements stays intact
 lowerboundsg1(fro,fco) = NaN;
 upperboundsg1(fro,fco) = NaN;
 lowerboundsg2(fro2,fco2) = NaN;
@@ -83,22 +91,23 @@ boundsdepth2 = upperboundsg2-lowerboundsg2;
 boundsdepth3 = upperboundsg3-lowerboundsg3;
 
 %setup for time axis
-datstr = num2str(datnum(:,1:3)); %change date stamps to string
-datenumbers = datenum(datstr); %now make them true MATLAB datenums
+[sndr,~] = size(datnum); %find the number of rows
+datnum(:,5:6) = zeros(sndr,2); %fill with zeros, this serves as entries for minutes and hours so that datenum will understand them
+datenumbers = datenum(datnum); %now make them true MATLAB datenums
 [uniIndex] = find(unique(datenumbers)); %bar requires that there are no duplicates in the x-data - this finds the indices of all unique datenumbers
 dateForBar = NaN(1,pay); %bar also requires that the X and Y have the same size
 dateForBar(uniIndex) = unique(datenumbers); %this creates a set of datenumbers that is the same size as the data, and does not contain duplicates
 
 figure
-barWN = bar(dateForBar,cat(2,lowerboundsg1',boundsdepth'),'stacked'); %bar the dates vs the amalgamation of the lowerbounds and depth
+barWN = bar(dateForBar,cat(2,lowerboundsg1',boundsdepth'),'stacked','barwidth',16); %bar the dates vs the amalgamation of the lowerbounds and depth
 set(barWN(1),'EdgeColor','none','FaceColor','w'); %change the color of the bar from 0 to min altitude to be invisible
 set(barWN(2),'EdgeColor','b','FaceColor','b');
 hold on
-barWN2 = bar(dateForBar,cat(2,lowerboundsg2',boundsdepth2'),'stacked');
+barWN2 = bar(dateForBar,cat(2,lowerboundsg2',boundsdepth2'),'stacked','barwidth',16);
 set(barWN2(1),'EdgeColor','none','FaceColor','w');
 set(barWN2(2),'EdgeColor','b','FaceColor','b');
 hold on
-barWN3 = bar(dateForBar,cat(2,lowerboundsg3',boundsdepth3'),'stacked');
+barWN3 = bar(dateForBar,cat(2,lowerboundsg3',boundsdepth3'),'stacked','barwidth',16);
 set(barWN3(1),'EdgeColor','none','FaceColor','w');
 set(barWN3(2),'EdgeColor','b','FaceColor','b');
 line1 = ('Altitude of Warmnoses Aloft vs Sounding Date');
@@ -177,29 +186,28 @@ groundedDepthyear = groundedupperyear-groundedyear;
 grounded2Depthyear = groundedupperyear2-groundedyear2;
 lbyear(gwnxyr,gwnyyr) = NaN;
 ubyear(gwnxyr,gwnyyr) = NaN;
-lbyear2(gwnxyr,gwnyyr) = NaN;
-ubyear2(gwnxyr,gwnyyr) = NaN;
+lbyear2(gwnxyr2,gwnyyr2) = NaN;
+ubyear2(gwnxyr2,gwnyyr2) = NaN;
 boundsdepthyear = ubyear-lbyear;
 boundsdepthyear2 = ubyear2-lbyear2;
 boundsdepthyear3 = ubyear3-lbyear3;
 
-yrstr = num2str(yearnum(:,1:3)); %change date stamps to string
-yrnumbers = datenum(yrstr); %now make them true MATLAB datenums
+
+[yrr,~] = size(yrstr); %find number of time entries
+yearnum(:,5:6) = zeros(yrr,2); %make fake zero entries 
+yrnumbers = datenum(yearnum); %now make them true MATLAB datenums
 [uniIndexY] = find(unique(yrnumbers)); %bar requires that there are no duplicates in the x-data - this finds the indices of all unique datenumbers
 dateForBarY = NaN(1,yearpay); %bar also requires that the X and Y have the same size
 dateForBarY(uniIndexY) = unique(yrnumbers); %this creates a set of datenumbers that is the same size as the data, and does not contain duplicates
-%nina = 1043:1166;
 
-%% NOTE: this looks like it's working BUT IT'S NOT: data for warmnoses aloft isn't lined up properly, and noses on the same day are being mashed together
-%%may need to rewrite with adding minutes, seconds 
 figure
 barGN = bar(dateForBarY,cat(2,groundedyear',groundedDepthyear'),'stacked');
 set(barGN(1),'EdgeColor','none','FaceColor','w');
-set(barGN(2),'EdgeColor','b','FaceColor','b');
+set(barGN(2),'EdgeColor','g','FaceColor','g');
 hold on
-% barGN2 = bar(dateForBarY,cat(2,groundedyear2',grounded2Depthyear'),'stacked');
-% set(barGN2(1),'EdgeColor','none','FaceColor','w');
-% set(barGN2(2),'EdgeColor','b','FaceColor','b');
+barGN2 = bar(dateForBarY,cat(2,groundedyear2',grounded2Depthyear'),'stacked');
+set(barGN2(1),'EdgeColor','none','FaceColor','w');
+set(barGN2(2),'EdgeColor','g','FaceColor','g');
 hold on
 barWN = bar(dateForBarY,cat(2,lbyear',boundsdepthyear'),'stacked'); %bar the dates vs the amalgamation of the lowerbounds and depth
 set(barWN(1),'EdgeColor','none','FaceColor','w'); %change the color of the bar from 0 to min altitude to be invisible
@@ -213,8 +221,6 @@ barWN3 = bar(dateForBarY,cat(2,lbyear3',boundsdepthyear3'),'stacked');
 set(barWN3(1),'EdgeColor','none','FaceColor','w');
 set(barWN3(2),'EdgeColor','b','FaceColor','b');
 ylim([0 5])
-datetickzoom('x',2) %EXTERNAL FUNCTION - otherwise tick number is very inflexible
-
 
 line1 = ('Altitude of Warmnoses Aloft vs Sounding Date');
 yearstr = num2str(year);
