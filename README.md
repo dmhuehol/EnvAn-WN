@@ -27,6 +27,8 @@ IGRAimpf: current (6/14/17) version of MATLAB function to create a structure of 
 
 IGRAimpfil: current (6/14/17) version of MATLAB function to import IGRA v1 data and output ALL useful sounding structures (filtered, goodfinal, and warmnosesfinal being the most important). Updated 6/14/17 to add help, make input_file a usable input, and remove tic/toc.
 
+newtip: current (6/20/17) version of MATLAB function to create a custom Data Cursor tooltip using variables from within a parent function. Must be nested within another function. This version of newtip is specifically designed to work with wnaltplot and wnaltyearplot, but the method could be easily adapted to work with other situations.
+
 nosedetect: current (6/14/17) version of MATLAB function to separate a soundings data structure into warmnose and nonwarmnose structures, with the warmnose structure also containing a structure with details about the warmnose(s). A little clumsy right now, but noseplotfind is usually preferable anyways. Updated 6/14/17 to standardize help format and make small editing changes within the function.
 
 rhumplot: current (6/14/17) version of MATLAB function to generate a figure with charts of relative humidity (%) vs pressure and relative humidity vs height from input sounding number and sounding data structure. Additionally, takes a guess at the cloud base height and returns this 1x2 array (pressure level, height) as output. rhumplot is called within soundplots--this function only needs to be used if the user does not want other plots. Updated 6/14/17 to fix freezing temperature and standardize the help format.
@@ -39,6 +41,10 @@ levfilters: current (6/13/17) version of MATLAB function to filter out given lev
 
 soundplots: current (6/14/17) version of MATLAB function to chart soundings given a specific time and date. Updated 6/14/17 to fix freezing temperature, edit comments, and standardize the function help format.
 
+wnaltplot: current (6/20/17) version of MATLAB function to display the altitudes of the physical locations of the warmnoses within the atmosphere. Basically, creates a ranged bar graph against time to represent the warmnoses, given a sounding structure containing only warmnose data. Updated 6/20/17 with better control of figure creation, full documentation, and an improvement to the tooltip display. Will be updated extensively in the future with features such as cloud base visualization and filtration by surface conditions, but is completely usable for warmnose analysis in its current form.
+
+wnaltyearplot: current (6/20/17) version of MATLAB function to display altitudes of physical locations of the warmnoses within the atmosphere. This function is designed to display only figures corresponding to the input year; it is essentially just the year input functionality from wnaltplot. Easier to use if only the year-by-year features from wnaltplot are needed. Updated 6/20/17 with full documentation and new tooltips (see newtip and wnaltplot). Will be updated in the future, but is usable for warmnose analysis in its current form.
+
 wnumport: current (6/14/17) version of MATLAB function to create a structure of surface observations data given a raw Mesowest csv file. Updated 6/14/17 to standardize function help and make minor editing changes to the function.
 
 yearfilterfs: current (6/14/17) version of MATLAB function to filter out years from a sounding structure. Updated 6/14/17 to standardize function help format.
@@ -50,15 +56,11 @@ atplot: currently (6/8/17) just a grab bag of plotting loops, originally from FW
 
 convection: current (5/31/17) version of MATLAB function to find relevant meteorological variables necessary to calculate basic properties relevant to convection and stability. Currently just a skeleton of code from Megan Amanatides's original script.
 
-myupdatefcn: current (6/19/17) version of MATLAB function to provide more useful Data Cursor tooltips in ranged bar figures. This function is used in wnaltplot and wnaltyearplot to display upper and lower bounds along with decoded datenumbers in the Data Cursor tooltip. CURRENTLY NONFUNCTIONAL, as it turns out lower bounds are darn hard to work into this.
+myupdatefcn: CONVERTED INTO NEWTIP
 
 noseplotfind: current (6/14/17) version of MATLAB function to detect and display warmnoses. Currently displays TvP, Tvz, and skew-T charts. See "to be added" section near end of help for features which will be added in the near future. Updated 6/14/17 to reflect the complete splitting of warmnose analysis duties to nosedetect, standardize funciton format, and fix freezing temperature.
 
 WarmNoseMain: current (6/19/17) version of MATLAB script where issues with the altitude plots are being worked out. Will be removed once all issues are worked out, and functionality will be folded into wnaltplot. Currently contains working code for years and totals. Will be removed soon; still in the process of collapsing into wnaltplot and wnaltyearplot.
-
-wnaltplot: current (6/19/17) version of MATLAB function to display the altitudes of the physical locations of the warmnoses within the atmosphere. Basically, creates a ranged bar graph against time to represent the warmnoses, given a sounding structure containing only warmnose data. Future updates will make aesthetic changes to figures, add ability to plot by year, add commenting and help, filtration by month and surface conditions, and plotting of cloud base. Updated 6/19/17 with working year plot, better control of figure creation, better documentation, and an IN-PROGRESS improvement to the tooltip display. Currently does not work because of tooltip display; if this section is commented out, the function can be used normally.
-
-wnaltyearplot: current (6/19/17) version of MATLAB function to display altitudes of physical locations of the warmnoses within the atmosphere. This function is designed to display only figures corresponding to the input year; it is essentially just the year input functionality from wnaltplot. Easier to use if only the year-by-year features from wnaltplot are needed. Needs to be documented. Additionally, tooltips similar to wnaltplot will be added once those are figured out.
 
 Nonfunctional:
 
