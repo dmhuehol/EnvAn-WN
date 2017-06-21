@@ -56,7 +56,7 @@ if ~exist('groundedplot','var')
     groundedplot = 0; %disable groundplots by default
 end
 if ~exist('year','var')
-    year = 3333; %missing year value; prevents the creation of yearplots
+    year = 3333; %missing year value; prevents the creation of yearplots when a no year input was given
 end
 
 %% Import data
@@ -65,7 +65,7 @@ yc = 1; %year counter, prevents an army of zeros
 ecount = 0; %error counter
 datnum = zeros(length(sounding),4); %preallocate for construction of a date array
 DataIssueShownAlready = 0; %controls whether or not to display message regarding data quality (see last part of loop)
-for f = 1:length(sounding) %unfortunately, storage in nested structures means that loops are the only option for extracting large quantities of data
+for f = 1:length(sounding) %storage in nested structures means that loops are the only option for extracting large quantities of data
     try %in case something goes wrong
     datnum(f,1:4) = sounding(f).valid_date_num; %store all datenumbers in the date array
     lowerboundsg1(f) = sounding(f).warmnose.lowerboundg1; %HEIGHT collection of first lower bounds
@@ -401,8 +401,6 @@ switch groundedplot
         %do nothing
 end
 
-%BE CAREFUL after this line - thanks to the otherwise->return, anything after
-%this switch/case will not be executed in case of groundedplot~=1
 if year~=3333
     switch groundedplot %this is for those plots which include grounded warmnoses according to the input year
         case 1
@@ -463,7 +461,6 @@ if year~=3333
             dcm_obj = datacursormode(figure(9));
             set(dcm_obj,'UpdateFcn',@newtip)
         otherwise %no need to make a fuss
-            return
     end
 end
 

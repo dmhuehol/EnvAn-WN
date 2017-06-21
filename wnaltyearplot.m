@@ -1,7 +1,8 @@
 function [] = wnaltyearplot(soundings,year,grounded)
 %%wnaltyearplot
     %function to plot altitude of warmnoses against observation time given
-    %an input year.
+    %an input year. Additionally, the estimated cloud base is plotted as
+    %well.
     %
     %General form: wnaltyearplot(soundings,year,grounded)
     %Minimum acceptable form: wnaltyearplot(soundings,year)
@@ -11,6 +12,8 @@ function [] = wnaltyearplot(soundings,year,grounded)
     %       altitude of warmnoses aloft vs observation time for input year
     %       altitude of warmnoses grounded and aloft vs observation time for input year
     %       altitude of grounded warmnoses vs observation time for input year
+    %   note that all figures also plot estimated cloud base
+    %
     %
     %Inputs:
     %soundings: soundings data structure - must already be processed for
@@ -21,13 +24,15 @@ function [] = wnaltyearplot(soundings,year,grounded)
     %figures will not be created. Input value of 1 to create grounded
     %figures.
     %
-    %Version Date: 6/20/17
-    %Last major revision: 6/20/17
+    %REQUIRES EXTERNAL FUNCTION: datetickzoom is used instead of MATLAB-native datetick
+    %
+    %Version Date: 6/21/17
+    %Last major revision: 6/21/17
     %Written by Daniel Hueholt
     %North Carolina State University
     %Undergraduate Research Assistant at Environment Analytics
     %
-    %See also IGRAimpfil, wnaltplot
+    %See also IGRAimpfil, wnaltplot, newtip, datetickzoom
     %
 
 if ~exist('grounded','var')
@@ -93,6 +98,9 @@ ubyear3(end:yearpay) = NaN;
 %detect grounded or near-grounded warmnoses
 [gwnxyr,gwnyyr] = find(lbyear<0.5);
 [gwnxyr2,gwnyyr2] = find(lbyear2<0.5);
+[awnxyr,awnyyr] = find(lbyear>=0.5);
+[awnxyr2,awnyyr2] = find(lbyear2>=0.5);
+[awnxyr3,awnyyr3] = find(lbyear3>=0.5);
 %save grounded/near-grounded data separately
 groundedyear = NaN(1,yearpay);
 groundedupperyear = NaN(1,yearpay);
@@ -133,6 +141,25 @@ datenumbers = datenum(datnum); %now make them true MATLAB datenums
 [uniIndex] = find(unique(datenumbers)); %bar requires that there are no duplicates in the x-data - this finds the indices of all unique datenumbers
 dateForBar = NaN(1,pay); %bar also requires that the X and Y have the same size
 dateForBar(uniIndex) = unique(datenumbers); %this creates a set of datenumbers that is the same size as the data, and does not contain duplicates
+
+[firstdex] = find(dateForBar == dateForBarY(1)); %first index corresponding to the input year
+[lastdex] = find(dateForBar == dateForBarY(end)); %last index corresponding to the input year
+ggc = 1; %counter to create cloud base plot
+cloudbase = NaN(1,lastdex-firstdex); %preallocate an array based on number of indices
+for gg = firstdex:lastdex
+    [LCL] = cloudbaseplot(soundings,gg,0,0); %see cloudbaseplot function
+    if isnan(LCL(2))~=1 %if there isn't a cloud
+        cloudbase(ggc) = LCL(2); %LCL(2) is the LCL in height coordinates
+        ggc = ggc+1; %increase counter
+    else
+        ggc = ggc+1; %keeps the size of the matrix correct
+    end
+end
+cloudbasealoft = NaN(1,length(cloudbase)); %cloud base for WN aloft is same size as grounded
+%filter so cloud bases corresponding to grounded warmnoses are not plotted
+cloudbasealoft(awnxyr,awnyyr) = cloudbase(awnxyr,awnyyr); %aloft in first
+cloudbasealoft(awnxyr2,awnyyr2) = cloudbase(awnxyr2,awnyyr2); %aloft in second
+cloudbasealoft(awnxyr3,awnyyr3) = cloudbase(awnxyr3,awnyyr3); %aloft in third
 
 %% Plotting
 figure(1); %altitude of warmnoses aloft vs observation time for input year
@@ -182,6 +209,9 @@ dcm_obj = datacursormode(figure(1));
             ['Upper: ',num2str(pos(2))],['Lower: ',lowerstr]}; %this sets the tooltip format
     end
 set(dcm_obj,'UpdateFcn',@newtip) %set the tooltips to use the newtip format
+hold on
+scatter(dateForBarY,cloudbasealoft,'^b') %plot the cloud base as blue up triangles
+hold off
 
 
 switch grounded %switch/case instead of if/elseif/else so adding new functionality later is easier
@@ -216,6 +246,8 @@ switch grounded %switch/case instead of if/elseif/else so adding new functionali
         ylabel('Height (km)')
         set(gca,'XMinorTick','on','YMinorTick','on')
         set(gca,'XTick',dateForBarY) %set where XTicks are; make sure they're in the same place as the date information
+        hold on
+        scatter(dateForBarY,cloudbase,'^b') %plot the cloud base as blue up triangles
         datetickzoom('x',2) %EXTERNAL FUNCTION - otherwise tick number is very inflexible
         dcm_obj = datacursormode(figure(2));
         set(dcm_obj,'UpdateFcn',@newtip) %set the tooltips to use the newtip format
@@ -228,6 +260,8 @@ switch grounded %switch/case instead of if/elseif/else so adding new functionali
         barGN2 = bar(dateForBarY,cat(2,groundedyear2',grounded2Depthyear'),'stacked');
         set(barGN2(1),'EdgeColor','none','FaceColor','w');
         set(barGN2(2),'EdgeColor','g','FaceColor','g');
+        hold on
+        scatter(dateForBarY,cloudbase,'^b') %plot the cloud base as blue up triangles
         hold on
         ylim([0 5])
         line1 = ('Altitude of Grounded Warmnoses vs Sounding Date');
