@@ -11,6 +11,8 @@ FWOKXh6: current (5/26/17) version of MATLAB script to process soundings and sur
 
 FWOKXh7: current (6/8/17) version of the FWOKXh line of sounding processing and analysis scripts. This is the first one to head towards the eventual goal of offloading most of the functionality into the auxiliary functions, which are called within this script. Updated 6/8/17 with small changes, mostly just fiddly test things to make wnlocplot work.
 
+cloudbaseplot: current (6/21/17) version of function to plot cloud base estimated from sounding relative humidity observations.
+
 dewrelh: current (6/13/17) version of MATLAB function to calculate dewpoint and relative humidity from temperature and dewpoint depression. Updated 6/13/17 to standardize the function help format.
 
 findsnd: current (6/14/17) version of MATLAB function to find the sounding number of a sounding on a particular date from within a sounding structure. Updated 6/14/17 to standardize function help format.
@@ -41,9 +43,9 @@ levfilters: current (6/13/17) version of MATLAB function to filter out given lev
 
 soundplots: current (6/14/17) version of MATLAB function to chart soundings given a specific time and date. Updated 6/14/17 to fix freezing temperature, edit comments, and standardize the function help format.
 
-wnaltplot: current (6/20/17) version of MATLAB function to display the altitudes of the physical locations of the warmnoses within the atmosphere. Basically, creates a ranged bar graph against time to represent the warmnoses, given a sounding structure containing only warmnose data. Updated 6/20/17 with better control of figure creation, full documentation, and an improvement to the tooltip display. Will be updated extensively in the future with features such as cloud base visualization and filtration by surface conditions, but is completely usable for warmnose analysis in its current form.
+wnaltplot: current (6/20/17) version of MATLAB function to display the altitudes of the physical locations of the warmnoses within the atmosphere. Basically, creates a ranged bar graph against time to represent the warmnoses, given a sounding structure containing only warmnose data. Updated 6/21/17 with documentation edits and other minor changes. Will be updated extensively in the future with features such as cloud base visualization and filtration by surface conditions, but is completely usable for warmnose analysis in its current form.
 
-wnaltyearplot: current (6/20/17) version of MATLAB function to display altitudes of physical locations of the warmnoses within the atmosphere. This function is designed to display only figures corresponding to the input year; it is essentially just the year input functionality from wnaltplot. Easier to use if only the year-by-year features from wnaltplot are needed. Updated 6/20/17 with full documentation and new tooltips (see newtip and wnaltplot). Will be updated in the future, but is usable for warmnose analysis in its current form.
+wnaltyearplot: current (6/20/17) version of MATLAB function to display altitudes of physical locations of the warmnoses within the atmosphere. This function is designed to display only figures corresponding to the input year; it is essentially just the year input functionality from wnaltplot. Easier to use if only the year-by-year features from wnaltplot are needed. Updated 6/21/17 to add cloud base plots and improve documentation. Will be updated in the future, but is usable for warmnose analysis in its current form.
 
 wnumport: current (6/14/17) version of MATLAB function to create a structure of surface observations data given a raw Mesowest csv file. Updated 6/14/17 to standardize function help and make minor editing changes to the function.
 
@@ -56,11 +58,9 @@ atplot: currently (6/8/17) just a grab bag of plotting loops, originally from FW
 
 convection: current (5/31/17) version of MATLAB function to find relevant meteorological variables necessary to calculate basic properties relevant to convection and stability. Currently just a skeleton of code from Megan Amanatides's original script.
 
-myupdatefcn: CONVERTED INTO NEWTIP
-
 noseplotfind: current (6/14/17) version of MATLAB function to detect and display warmnoses. Currently displays TvP, Tvz, and skew-T charts. See "to be added" section near end of help for features which will be added in the near future. Updated 6/14/17 to reflect the complete splitting of warmnose analysis duties to nosedetect, standardize funciton format, and fix freezing temperature.
 
-WarmNoseMain: current (6/19/17) version of MATLAB script where issues with the altitude plots are being worked out. Will be removed once all issues are worked out, and functionality will be folded into wnaltplot. Currently contains working code for years and totals. Will be removed soon; still in the process of collapsing into wnaltplot and wnaltyearplot.
+WarmNoseMain: REMOVED, all functionality has been folded into wnaltplot and wnaltyearplot.
 
 Nonfunctional:
 
