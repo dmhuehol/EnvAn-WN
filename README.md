@@ -9,7 +9,7 @@ Working:
 
 FWOKXh7: current (6/29/17) version of the FWOKXh line of sounding processing and analysis scripts. This is the first one to head towards the eventual goal of offloading most of the functionality into the auxiliary functions, which are called within this script. Updated 6/29/17 to point to timefilter instead of yearfilterfs.
 
-cloudbaseplot: current (6/28/17) version of function to plot cloud base estimated from sounding relative humidity observations. Updated 6/28/17 with note about RH value and tolerance.
+cloudbaseplot: current (6/30/17) version of function to plot cloud base estimated from sounding relative humidity observations. Updated 6/30/17 with changed RH value.
 
 dewrelh: current (6/13/17) version of MATLAB function to calculate dewpoint and relative humidity from temperature and dewpoint depression. Updated 6/13/17 to standardize the function help format.
 
@@ -19,13 +19,15 @@ FWOKXskew: current (6/14/17) version of MATLAB function to create a skew-T chart
 
 IGRAimpf: current (6/14/17) version of MATLAB function to create a structure of soundings data from raw Integrated Global Radiosonde Archive v1 .dat data. (Based on a function originally written by Megan Amanatides at NC State.) Updated 6/14/17 to standardize the function help format.
 
-IGRAimpfil: current (6/29/17) version of MATLAB function to import IGRA v1 data and output ALL useful sounding structures (filtered, goodfinal, and warmnosesfinal being the most important). Updated 6/29/17 to use timefilter instead of yearfilterfs.
+IGRAimpfil: current (6/30/17) version of MATLAB function to import IGRA v1 data and output ALL useful sounding structures (filtered, goodfinal, and warmnosesfinal being the most important). Updated 6/30/17 to add support for precipfilter.
 
 levfilters: current (6/13/17) version of MATLAB function to filter out given level types from IGRA v1 soundings data. Updated 6/13/17 to standardize help format and reflect changes in other functions.
 
 newtip: current (6/20/17) version of MATLAB function to create a custom Data Cursor tooltip using variables from within a parent function. Must be nested within another function. This version of newtip is specifically designed to work with wnaltplot and wnaltyearplot, but the method could be easily adapted to work with other situations.
 
 nosedetect: current (6/14/17) version of MATLAB function to separate a soundings data structure into warmnose and nonwarmnose structures, with the warmnose structure also containing a structure with details about the warmnose(s). A little clumsy right now, but noseplotfind is usually preferable anyways. Updated 6/14/17 to standardize help format and make small editing changes within the function.
+
+precipfilter: current (6/30/17) version of MATLAB function to filter warmnose soundings data by the presence of precipitation at the surface, as shown in Mesowest data adjacent in time to the time of soundings in the input structure.
 
 prestogeo: current (6/14/17) version of MATLAB function to calculate geopotential height given pressure and temperature. Includes a variety of bonus options that work with the FWOKXh line, which I wrote with this project in mind. simple_prestogeo was designed to be a bare-bones geopotential height calculator. Equation comes from Durre and Yin (2008) http://journals.ametsoc.org/doi/pdf/10.1175/2008BAMS2603.1 Updated 6/14/17 to standardize help format and make small editing changes to the rest of the function.
 
@@ -45,9 +47,9 @@ timefilter: current (6/29/17) version of MATLAB function to filter out years and
 
 wnaltplot: current (6/20/17) version of MATLAB function to display the altitudes of the physical locations of the warmnoses within the atmosphere. Basically, creates a ranged bar graph against time to represent the warmnoses, given a sounding structure containing only warmnose data. Updated 6/21/17 with documentation edits and other minor changes. Will be updated extensively in the future with features such as cloud base visualization and filtration by surface conditions, but is completely usable for warmnose analysis in its current form.
 
-wnaltyearplot: current (6/28/17) version of MATLAB function to display altitudes of physical locations of the warmnoses within the atmosphere. This function is designed to display only figures corresponding to the input year; it is essentially just the year input functionality from wnaltplot. Easier to use if only the year-by-year features from wnaltplot are needed. Updated 6/28/17 to improve cloud base plot (these changes still need to be added to wnaltplot). Will be updated in the future, but is usable for warmnose analysis in its current form.
+wnaltyearplot: current (6/30/17) version of MATLAB function to display altitudes of physical locations of the warmnoses within the atmosphere. This function is designed to display only figures corresponding to the input year; it is essentially just the year input functionality from wnaltplot. Easier to use if only the year-by-year features from wnaltplot are needed. Updated 6/30/17 to fix issues that come up when filters cause an array (such as ubyear3) to not exist.
 
-wnumport: current (6/14/17) version of MATLAB function to create a structure of surface observations data given a raw Mesowest csv file. Updated 6/14/17 to standardize function help and make minor editing changes to the function.
+wnumport: current (6/30/17) version of MATLAB function to create a structure of surface observations data given a raw Mesowest csv file. Updated 6/30/17 for resilience in case of only one input.
 
 yearfilterfs: RENAMED TO TIMEFILTER
 
@@ -59,8 +61,6 @@ atplot: currently (6/8/17) just a grab bag of plotting loops, originally from FW
 convection: current (5/31/17) version of MATLAB function to find relevant meteorological variables necessary to calculate basic properties relevant to convection and stability. Currently just a skeleton of code from Megan Amanatides's original script.
 
 noseplotfind: current (6/14/17) version of MATLAB function to detect and display warmnoses. Currently displays TvP, Tvz, and skew-T charts. See "to be added" section near end of help for features which will be added in the near future. Updated 6/14/17 to reflect the complete splitting of warmnose analysis duties to nosedetect, standardize funciton format, and fix freezing temperature.
-
-precipfilter: current (6/29/17) version of MATLAB function to filter warmnose soundings data by the presence of precipitation at the surface. Currently in development.
 
 Nonfunctional:
 
