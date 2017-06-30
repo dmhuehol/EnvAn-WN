@@ -1,6 +1,7 @@
-function [preciptrue] = precipfilter(warmnosesfinal,dat)
+function [wnoutput,preciptrue] = precipfilter(warmnosesfinal,dat,spread)
 %Note that Mesowest surface data only extends back to August 2002
-spread = 15; %find roughly the whole day's worth of records
+%spread = 15 searches roughly one day of records
+%sets how many adjacent entries to look for precipitation in; higher values are more lenient and lower values are more stringent--this basically sets the strength of the filter
 % for hs = 1:length(warmnosesfinal)
 %     datevec = warmnosesfinal(hs).valid_date_num; %concatenate inputs into a date vector, which can be checked against the valid_date_num entry in the surface conditions table
 %     for ad = 1:height(dat) %search through table data
@@ -15,28 +16,35 @@ spread = 15; %find roughly the whole day's worth of records
 %         end
 %     end
 % end
-datevector = [2002,12,31,00];
-lettuce = [dat.Year,dat.Month,dat.Day,dat.Hour,dat.Minute];
-[yearcheck] = find(ismember(dat.valid_date_num(:,1),datevector(1)));
-[monthcheck] = find(ismember(dat.valid_date_num(yearcheck,2),datevector(2)));
-[daycheck] = find(ismember(dat.valid_date_num(monthcheck,3),datevector(3)));
-[timecheck] = find(ismember(dat.valid_date_num(daycheck,4),datevector(4)));
-sfound = yearcheck(monthcheck(daycheck(timecheck)));
-
-[yr,~] = find(ismember(dat.Year,datevector(1)));
-lettuce(yr,1) = 9999;
-[mn,~] = find(ismember(dat.Month(yr),datevector(2)));
-lettuce(mn,2) = 9999;
-[dy,~] = find(ismember(dat.Day(mn),datevector(3)));
-lettuce(dy,3) = 9999;
-[hr,~] = find(ismember(dat.Hour(day),datevector(4)));
-lettuce(hr,4) = 9999;
-
-if ~exist('sfound','var') %rarely, the input time isn't in the Mesowest table
+errorcount = 0;
+wnoutput = warmnosesfinal;
+sc = 1;
+tc = length(warmnosesfinal);
+while sc<tc %loop through all warmnose soundings
+    datevector = wnoutput(sc).valid_date_num;
+    [foundit] = find(ismember(dat.valid_date_num,datevector,'rows')==1); %finds index of entry in Mesowest table that corresponds to sounding
+    closerlook = dat((foundit-spread):(foundit+spread),:); %extracts the section of the Mesowest table to entries +/- spread from the foundit index
+    [cx,~] = size(nonzeros(closerlook.HrPrecip)); %find size of the precip data
+    checkNaN = NaN(cx,1); %make a NaN of the same size
+    try
+        if isequaln(nonzeros(closerlook.HrPrecip),checkNaN)~=1 %if there was no precipitation, then every entry will be NaN or zero. Therefore, nonzeros(section) will only have no precipitation if it is equal to a NaN array of the same size.
+            preciptrue = 1; %if there was precipitation
+        else %any other case
+            wnoutput(sc) = []; %destroy
+            preciptrue = 0;
+            tc = tc-1;
+        end
+    catch ME;
+        errorcount = errorcount+1;
+        disp('SCREAMING')
+        continue
+    end
+    sc = sc+1;
+end
+disp('You made it!')
+if ~exist('foundit','var') %rarely, the input time isn't in the Mesowest table
     msg = 'Cannot find requested entry in data table! Check input and try again.';
     error(msg) %in this case, warn the user and end the function
 end
-
-%col 13 is hrprecip, col 6 is weather code
 
 end

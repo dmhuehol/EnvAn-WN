@@ -86,6 +86,10 @@ for f = 1:length(soundings) %unfortunately, nested structures means loops are th
 end
 
 [~,yearpay] = size(lbyear); %find size of the largest matrix for the input year
+if ~exist('lbyear3','var') %it happens
+    ubyear3 = 0; %this way there don't need to be a billion exist checks
+    lbyear3 = 0; %for lbyear and ubyear
+end
 %adjust size of other matrices to match
 lbyear2(lbyear2==0) = NaN;
 ubyear2(ubyear2==0) = NaN;

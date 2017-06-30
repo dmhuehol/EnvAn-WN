@@ -1,4 +1,4 @@
-function [sndng,filtered,soundsh,goodfinal,warmnosesfinal,nowarmnosesfinal] = IGRAimpfil(input_file)
+function [sndng,filtered,soundsh,goodfinal,warmnosesfinal,nowarmnosesfinal,wnoutput] = IGRAimpfil(input_file,input_file_meso)
 %%IGRAimpfil
     %Function which, given a file of raw IGRA v1 soundings data, will read
     %the data into MATLAB, filter it according to year, filter it according
@@ -8,7 +8,7 @@ function [sndng,filtered,soundsh,goodfinal,warmnosesfinal,nowarmnosesfinal] = IG
     %this ideal for further investigation using functions like soundplots.
     %
     %General form:
-    %[sndng,filtered,soundsh,goodfinal,warmnosesfinal,nowarmnosesfinal] = IGRAimpfil(input_file)
+    %[sndng,filtered,soundsh,goodfinal,warmnosesfinal,nowarmnosesfinal,wnoutput] = IGRAimpfil(input_file)
     %
     %Outputs:
     %sndng - raw soundings data read into MATLAB and separated into different
@@ -20,23 +20,27 @@ function [sndng,filtered,soundsh,goodfinal,warmnosesfinal,nowarmnosesfinal] = IG
     %soundings with warmnoses
     %nowarmnosesfinal - soundings structure containing data only from
     %soundings without warmnoses
+    %wnoutput - soundings structure which has been filtered to contain only
+    %data from days with precipitation
+    %
+    %For unclear reasons, all outputs must be called.
     %
     %Input:
     %input_file: file path of a *.dat IGRA v1 data file
+    %input_file_meso: file path of a Mesowest data table
     %
     %Eventually it is planned to have the various filters controlled at the
     %inputs, but for now it is necessary to change such settings within the
-    %function. New filters for surface conditions and month of year are
-    %also in development.
+    %function.
     %
     %Written by Daniel Hueholt
     %North Carolina State University
     %Undergraduate Research Assistant at Environment Analytics
-    %Version Date: 6/29/17
-    %Last major revision: 6/13/17
+    %Version Date: 6/30/17
+    %Last major revision: 6/30/17
     %
     %See also IGRAimpf, timefilter, levfilter, dewrelh, surfconfilter,
-    %nosedetect
+    %nosedetect, precipfilter, wnumport
     %
 
 [sndng] = IGRAimpf(input_file); %read the soundings data into MATLAB; this produces a structure of soundings data
@@ -65,5 +69,17 @@ disp('Quality control complete! 4/5')
 disp('Detecting warmnoses - please be patient!')
 [~,~,~,warmnosesfinal,nowarmnosesfinal,~,~,~,~,~,~,~,~] = nosedetect(goodfinal,1,length(goodfinal),0.5,20000);
 
-disp('Warmnose detection and soundings plots complete! 5/5')
+switch nargin
+    case 2
+        disp('Warmnose detection complete! 5/7')
+        [dat,~] = wnumport(input_file_meso);
+        disp('Mesowest data import complete! 6/7')
+        disp('Precipitation filtration in process - please be patient!')
+        [wnoutput,~] = precipfilter(warmnosesfinal,dat,10); %spread of 10 is approximately one day
+        disp('Precipitation filtration completed! 7/7')
+    otherwise
+        wnoutput = [];
+        disp('Warmnose detection complete! 5/5')
+end
+
 end

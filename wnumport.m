@@ -26,13 +26,17 @@ function [dat,decoded] = wnumport(input_file,todecode)
     %Written by: Daniel Hueholt
     %North Carolina State University
     %Undergraduate Research Assistant at Environment Analytics
-    %Version date: 6/14/2017
+    %Version date: 6/30/2017
     %Last major revision: 5/31/17
     %
     %See also surfconfind
     %
 
 %% File import
+if ~exist('todecode','var')
+    todecode = 0;
+end
+
 da = readtable(input_file,'HeaderLines',7); %import csv data file
 try
     warning('off','MATLAB:table:ModifiedVarNames'); %disable MATLAB's warning about modified variable names

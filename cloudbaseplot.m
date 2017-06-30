@@ -84,7 +84,7 @@ sounding(snum).dewpt(sounding(snum).dewpt<-150) = NaN;
 
 %find LCL (estimated as first height where RH=100); change RH value to be
 %more or less careful about finding clouds
-[r,~] = find(rhum>=100); %RH = 100 implies cloudbase
+[r,~] = find(rhum>=95); %RH = 100 implies cloudbase
 lcl = NaN; %assume there isn't a cloud
 if ~isempty(nonzeros(r)) %if there is a cloud base
     lcl = r(1); %the lowest cloud base is the first index
