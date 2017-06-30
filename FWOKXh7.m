@@ -5,13 +5,13 @@
 %pressure and temperature v height space. Additionally, it processes
 %surface conditions data which can be used to reference surface
 %conditions with the corresponding soundings data.
-%Version: 6/1/17
+%Version: 6/29/17
 %Last major edit: 5/31/17
 %Written by: Daniel Hueholt, North Carolina State University
 %Undergraduate Research Assistant at Environment Analytics
 %
 %See also: IGRAimpf, dewrelh, findsnd, levfilters, SkewT, soundplots,
-%wnumport, yearfilterfs
+%wnumport, timefilter
 %
 tic
 
@@ -26,7 +26,8 @@ input_file = 'C:\Users\danielholt\Documents\MATLAB\Project 1 - Warm Noses\Soundi
 disp('Data import complete! 1/8')
 
 filter_settings.year = [2002 2016]; %settings to remove all data that does not lie between 2002 and 2016, inclusive
-[filtered] = yearfilterfs(sndng,filter_settings); %create a new table with only the data needed
+filter_settings.month = [5,6,7,8,9]; %settings to remove all data that corresponds to the months of May through September, inclusive
+[filtered] = timefilter(sndng,filter_settings); %create a new table with only the data needed
 disp('Time filtering complete! 2/8')
 [soundsh] = levfilters(filtered,3); %remove all data with level type 3 (corresponding to extra wind layers, which throw off geopotential height and other variables)
 disp('Level filtering complete! 3/8')

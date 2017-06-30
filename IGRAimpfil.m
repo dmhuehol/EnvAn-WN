@@ -32,10 +32,10 @@ function [sndng,filtered,soundsh,goodfinal,warmnosesfinal,nowarmnosesfinal] = IG
     %Written by Daniel Hueholt
     %North Carolina State University
     %Undergraduate Research Assistant at Environment Analytics
-    %Version Date: 6/13/17
+    %Version Date: 6/29/17
     %Last major revision: 6/13/17
     %
-    %See also IGRAimpf, yearfilterfs, levfilter, dewrelh, surfconfilter,
+    %See also IGRAimpf, timefilter, levfilter, dewrelh, surfconfilter,
     %nosedetect
     %
 
@@ -44,7 +44,8 @@ function [sndng,filtered,soundsh,goodfinal,warmnosesfinal,nowarmnosesfinal] = IG
 disp('Data import complete! 1/5')
 
 filter_settings.year = [2002 2016]; %settings to remove all data that does not lie between 2002 and 2016, inclusive
-[filtered] = yearfilterfs(sndng,filter_settings); %create a new table with only the data needed
+filter_settings.month = [5 6 7 8 9]; %settings to remove all data that occurs in the months of May through September, inclusive
+[filtered] = timefilter(sndng,filter_settings); %create a new table with only the data needed
 disp('Time filtering complete! 2/5')
 [soundsh] = levfilters(filtered,3); %remove all data with level type 3 (corresponding to extra wind layers, which throw off geopotential height and other variables)
 disp('Level filtering complete! 3/5')

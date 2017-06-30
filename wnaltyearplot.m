@@ -26,8 +26,8 @@ function [] = wnaltyearplot(soundings,year,grounded)
     %
     %REQUIRES EXTERNAL FUNCTION: datetickzoom is used instead of MATLAB-native datetick
     %
-    %Version Date: 6/21/17
-    %Last major revision: 6/21/17
+    %Version Date: 6/28/17
+    %Last major revision: 6/28/17
     %Written by Daniel Hueholt
     %North Carolina State University
     %Undergraduate Research Assistant at Environment Analytics
@@ -145,21 +145,50 @@ dateForBar(uniIndex) = unique(datenumbers); %this creates a set of datenumbers t
 [firstdex] = find(dateForBar == dateForBarY(1)); %first index corresponding to the input year
 [lastdex] = find(dateForBar == dateForBarY(end)); %last index corresponding to the input year
 ggc = 1; %counter to create cloud base plot
-cloudbase = NaN(1,lastdex-firstdex); %preallocate an array based on number of indices
+ggd = 1;
+cloudbase = NaN(1,length(dateForBarY)); %preallocate an array based on number of indices
+moveon = 0;
 for gg = firstdex:lastdex
-    [LCL] = cloudbaseplot(soundings,gg,0,0); %see cloudbaseplot function
-    if isnan(LCL(2))~=1 %if there isn't a cloud
-        cloudbase(ggc) = LCL(2); %LCL(2) is the LCL in height coordinates
-        ggc = ggc+1; %increase counter
-    else
-        ggc = ggc+1; %keeps the size of the matrix correct
+    try %very rarely, a single sounding will be corrupt enough to cause this part of the function to fail
+        %if this happens, this statement prevents it from ruining the entire function
+        %error function within catch statement stops this from ignoring
+        %true problems in the dataset
+        [LCL] = cloudbaseplot(soundings,gg,0,0); %see cloudbaseplot function
+        if isnan(LCL(2))~=1 %if there isn't a cloud
+            cloudbase(ggc) = LCL(2); %LCL(2) is the LCL in height coordinates
+            ggc = ggc+1; %increase counter
+        else
+            ggc = ggc+1; %keeps the size of the matrix correct
+        end
+    catch ME; %if there's a problem
+        moveon = moveon+1; %keep track of how many problems there are
+        if moveon>9 %if there's ten or more problems
+            msg = 'Cloud base calculation failed 10 times! Check dataset for errors and try again.';
+            error(msg) %stop everything
+        end
+        continue %otherwise move on
     end
 end
+disp(moveon); %let the user know how many errors were passed over while calculating cloud base
+
+for gga = 1:length(dateForBarY)
+    %cloud base is plotted as a horizontal line on the altitude plot; these
+    %represent the left and right boundaries of said line
+    lhb(gga) = dateForBarY(gga)-0.4; %left bounds
+    rhb(gga) = dateForBarY(gga)+0.4; %right bounds
+end
+%replace zeroes with NaN; otherwise plotting gets screwed up as datenumbers
+%should always be above 7*10^5
+lhb(lhb==0) = NaN;
+rhb(rhb==0) = NaN;
 cloudbasealoft = NaN(1,length(cloudbase)); %cloud base for WN aloft is same size as grounded
 %filter so cloud bases corresponding to grounded warmnoses are not plotted
 cloudbasealoft(awnxyr,awnyyr) = cloudbase(awnxyr,awnyyr); %aloft in first
 cloudbasealoft(awnxyr2,awnyyr2) = cloudbase(awnxyr2,awnyyr2); %aloft in second
 cloudbasealoft(awnxyr3,awnyyr3) = cloudbase(awnxyr3,awnyyr3); %aloft in third
+%extra time assets for plotting
+firstnum = datenum([year,1,1,00,00,00]);
+lastnum = datenum([year,12,31,00,00,00]);
 
 %% Plotting
 figure(1); %altitude of warmnoses aloft vs observation time for input year
@@ -174,7 +203,13 @@ hold on
 barWN3 = bar(dateForBarY,cat(2,lbyear3',boundsdepthyear3'),'stacked');
 set(barWN3(1),'EdgeColor','none','FaceColor','w');
 set(barWN3(2),'EdgeColor','b','FaceColor','b');
+hold on
+for gg = 1:length(dateForBarY)
+    plot([lhb(gg),rhb(gg)],[cloudbasealoft(gg),cloudbasealoft(gg)],'r','LineWidth',1.5) %plot cloudbase as a horizontal line
+    hold on
+end
 ylim([0 5])
+xlim([firstnum-1,lastnum+1])
 line1 = ('Altitude of Warmnoses Aloft vs Sounding Date');
 yearstr = num2str(year);
 line2 = (['KOKX Soundings Data ' yearstr]);
@@ -184,7 +219,7 @@ xlabel('Observation Time (D/M/Y/H)')
 ylabel('Height (km)')
 set(gca,'XMinorTick','on','YMinorTick','on')
 set(gca,'XTick',dateForBarY) %set where XTicks are; make sure they're in the same place as the date information
-datetickzoom('x',2) %EXTERNAL FUNCTION - otherwise tick number is very inflexible
+datetickzoom('x',2,'keeplimits') %EXTERNAL FUNCTION - otherwise tick number is very inflexible
 dcm_obj = datacursormode(figure(1));
     function [txt] = newtip(empt,event_obj)
         %%newtip
@@ -209,8 +244,6 @@ dcm_obj = datacursormode(figure(1));
             ['Upper: ',num2str(pos(2))],['Lower: ',lowerstr]}; %this sets the tooltip format
     end
 set(dcm_obj,'UpdateFcn',@newtip) %set the tooltips to use the newtip format
-hold on
-scatter(dateForBarY,cloudbasealoft,'^b') %plot the cloud base as blue up triangles
 hold off
 
 
@@ -247,7 +280,14 @@ switch grounded %switch/case instead of if/elseif/else so adding new functionali
         set(gca,'XMinorTick','on','YMinorTick','on')
         set(gca,'XTick',dateForBarY) %set where XTicks are; make sure they're in the same place as the date information
         hold on
-        scatter(dateForBarY,cloudbase,'^b') %plot the cloud base as blue up triangles
+        for gg = 1:length(dateForBarY)
+            plot([lhb(gg),rhb(gg)],[cloudbase(gg),cloudbase(gg)],'r','LineWidth',1.5) %plot cloudbase as a horizontal line
+            hold on
+        end
+        for gg = 1:length(dateForBarY)
+            plot([lhb(gg),rhb(gg)],[cloudbasealoft(gg),cloudbasealoft(gg)],'r','LineWidth',1.5) %plot cloudbase as a horizontal line
+            hold on
+        end
         datetickzoom('x',2) %EXTERNAL FUNCTION - otherwise tick number is very inflexible
         dcm_obj = datacursormode(figure(2));
         set(dcm_obj,'UpdateFcn',@newtip) %set the tooltips to use the newtip format
@@ -261,8 +301,10 @@ switch grounded %switch/case instead of if/elseif/else so adding new functionali
         set(barGN2(1),'EdgeColor','none','FaceColor','w');
         set(barGN2(2),'EdgeColor','g','FaceColor','g');
         hold on
-        scatter(dateForBarY,cloudbase,'^b') %plot the cloud base as blue up triangles
-        hold on
+        for gg = 1:length(dateForBarY)
+            plot([lhb(gg),rhb(gg)],[cloudbase(gg),cloudbase(gg)],'-r','LineWidth',1.5) %plot cloudbase as a horizontal line
+            hold on
+        end
         ylim([0 5])
         line1 = ('Altitude of Grounded Warmnoses vs Sounding Date');
         yearstr = num2str(year);

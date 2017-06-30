@@ -21,7 +21,10 @@ function [gooddays,goodfinal] = surfconfilter(soundsh,surfcon)
     %4 deg C and all humidity below 80%, surfcon should be created using
     %commands surfcon.temp = 4;surfcon.relative_humidity=80
     %
-    %Version date: 6/14/17
+    %To filter by time, see timefilter. To filter by level type, see
+    %levfilters.
+    %
+    %Version date: 6/29/17
     %Last major revision: 5/31/17
     %Based on a section of a script originally written by Megan Amanatides at
     %NC State
@@ -29,7 +32,7 @@ function [gooddays,goodfinal] = surfconfilter(soundsh,surfcon)
     %North Carolina State University
     %Undergraduate Research Assistant at Environment Analytics
     %
-    %See also IGRAimpf, levfilters, yearfilterfs, IGRAimpf
+    %See also IGRAimpf, levfilters, timefilter, IGRAimpf
     %
 
 %for notices in case of missing surfcon settings

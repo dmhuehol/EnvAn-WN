@@ -8,14 +8,16 @@ function [LCL] = cloudbaseplot(sounding,snum,plotornot,display)
     %LCL: estimated height of cloud base in km
     %
     %Inputs:
-    %sounding: a processed soundings data structure
+    %sounding: a processed soundings data structure, as created by
+        %IGRAimpfil or similar function
     %snum: sounding number
     %plotornot: create figures or not. 1 to create figures, any other value
-    %to suppress figures.
+    %to find cloud base without plotting.
     %display: give updates in command window. 0 to disable updates, any
     %other value to update.
     %
-    %Version Date: 6/21/17
+    %Version Date: 6/28/17
+    %Last major revision: 6/21/17
     %Written by Daniel Hueholt
     %North Carolina State University
     %Undergraduate Research Assistant at Environment Analytics
@@ -80,8 +82,9 @@ sounding(snum).rhum(sounding(snum).rhum<0) = NaN;
 sounding(snum).dewpt(sounding(snum).dewpt<-150) = NaN;
 
 
-%find LCL (estimated as first height where RH=100)
-[r,~] = find(rhum==100); %RH = 100 implies cloudbase
+%find LCL (estimated as first height where RH=100); change RH value to be
+%more or less careful about finding clouds
+[r,~] = find(rhum>=100); %RH = 100 implies cloudbase
 lcl = NaN; %assume there isn't a cloud
 if ~isempty(nonzeros(r)) %if there is a cloud base
     lcl = r(1); %the lowest cloud base is the first index

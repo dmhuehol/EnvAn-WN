@@ -1,39 +1,44 @@
-%%wnlocplot - function to make plots of the vertical location of warmnoses
-%aloft in the atmosphere. Produces figures for individual warmnoses aloft (first,
-%second, third), all warmnoses aloft (stacked as in reality), all warmnoses
-%(divided by number), all warmnoses (included grounded, stacked), and
-%grounded warmnoses. Grounded warmnose figures are commented out by
-%default; see note at the end of this function.
-%
-%Unfortunately, this function is somewhat slow (usually takes 90-100
-%seconds to run), but this is because of the use of boxplot and can't
-%really be improved on while maintaining the current level of completeness.
-%
-%General form: [sounding] = wnlocplot(sounding,year)
-%
-%Output:
-%sounding: sounding data structure, same as input
-%
-%Input:
-%sounding - sounding data structure; MUST contain warmnose substructure and
-%only contain warmnose data. 
-%year - an individual year, will load a stacked all-warmnose aloft profile
-%and stacked all-warmnose profile for the input year. CURRENTLY A MANDATORY
-%INPUT.
-%
-%Version Date: 6/9/17
-%Written by: Daniel Hueholt
-%North Carolina State University
-%Undergraduate Research Assistant at Environment Analytics
-%
-%NOTE: As of 6/12/17, wnlocplot is DEFUNCT and has been superseded by
-%wnaltplot, which uses stacked bars instead of boxplot. This implementation
-%is quicker and does not require the use of the Statistics toolbox. No
-%further development will take place on wnlocplot.
-%
-%See also wnaltplot, IGRAimpfil
-%
+%%wnlocplot
+    %NOTE: THIS FUNCTION IS DEFUNCT AS OF 6/12/17. SEE wnaltplot OR
+    %wnaltyearplot FOR CURRENT VERSIONS.
+    %
+    %function to make plots of the vertical location of warmnoses
+    %aloft in the atmosphere. Produces figures for individual warmnoses aloft (first,
+    %second, third), all warmnoses aloft (stacked as in reality), all warmnoses
+    %(divided by number), all warmnoses (included grounded, stacked), and
+    %grounded warmnoses. Grounded warmnose figures are commented out by
+    %default; see note at the end of this function.
+    %
+    %Unfortunately, this function is somewhat slow (usually takes 90-100
+    %seconds to run), but this is because of the use of boxplot and can't
+    %really be improved on while maintaining the current level of completeness.
+    %
+    %General form: [sounding] = wnlocplot(sounding,year)
+    %
+    %Output:
+    %sounding: sounding data structure, same as input
+    %
+    %Input:
+    %sounding - sounding data structure; MUST contain warmnose substructure and
+    %only contain warmnose data. 
+    %year - an individual year, will load a stacked all-warmnose aloft profile
+    %and stacked all-warmnose profile for the input year. CURRENTLY A MANDATORY
+    %INPUT.
+    %
+    %Version Date: 6/9/17
+    %Written by: Daniel Hueholt
+    %North Carolina State University
+    %Undergraduate Research Assistant at Environment Analytics
+    %
+    %NOTE: As of 6/12/17, wnlocplot is DEFUNCT and has been superseded by
+    %wnaltplot, which uses stacked bars instead of boxplot. This implementation
+    %is quicker and does not require the use of the Statistics toolbox. No
+    %further development will take place on wnlocplot.
+    %
+    %See also wnaltplot, IGRAimpfil
+    %
 
+%% OBSOLETE -- FOR REVIEW PURPOSES ONLY
 function [sounding,vnum] = wnlocplot(sounding,year,simple)
 if ~exist('simple') %if no simple argument
     simple = 0; %assume all figures are to be loaded
