@@ -158,7 +158,7 @@ for gg = firstdex:lastdex
         %error function within catch statement stops this from ignoring
         %true problems in the dataset
         [LCL] = cloudbaseplot(soundings,gg,0,0); %see cloudbaseplot function
-        if isnan(LCL(2))~=1 %if there isn't a cloud
+        if isnan(LCL(2))~=1 %if there is a cloud
             cloudbase(ggc) = LCL(2); %LCL(2) is the LCL in height coordinates
             ggc = ggc+1; %increase counter
         else
