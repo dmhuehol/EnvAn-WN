@@ -26,7 +26,7 @@ function [] = wnaltyearplot(soundings,year,grounded)
     %
     %REQUIRES EXTERNAL FUNCTION: datetickzoom is used instead of MATLAB-native datetick
     %
-    %Version Date: 6/28/17
+    %Version Date: 7/3/17
     %Last major revision: 6/28/17
     %Written by Daniel Hueholt
     %North Carolina State University
