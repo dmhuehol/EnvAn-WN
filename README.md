@@ -45,8 +45,6 @@ surfconfind: current (6/14/17) version of MATLAB function to find row index of M
 
 timefilter: current (6/29/17) version of MATLAB function to filter out years and months from a sounding structure. Formerly called yearfilterfs. Updated 6/29/17 to filter by month, improve help and commenting, and allow for missing inputs.
 
-wnaltind: current (7/5/17) version of MATLAB function to create an altitude plot of an individual warmnose given an input date and sounding data structure. Fully functional as of 7/5/17; plots individual noses plus their associated cloud base, if known. Contains proper documentation.
-
 wnaltplot: current (6/20/17) version of MATLAB function to display the altitudes of the physical locations of the warmnoses within the atmosphere. Basically, creates a ranged bar graph against time to represent the warmnoses, given a sounding structure containing only warmnose data. Updated 6/21/17 with documentation edits and other minor changes. Will be updated extensively in the future with features such as cloud base visualization and filtration by surface conditions, but is completely usable for warmnose analysis in its current form.
 
 wnaltyearplot: current (7/3/17) version of MATLAB function to display altitudes of physical locations of the warmnoses within the atmosphere. This function is designed to display only figures corresponding to the input year; it is essentially just the year input functionality from wnaltplot. Easier to use if only the year-by-year features from wnaltplot are needed. Updated 7/3/17 to fix a critical typo in a comment in the cloudbaseplot section.
@@ -66,6 +64,8 @@ convection: current (5/31/17) version of MATLAB function to find relevant meteor
 
 noseplotfind: current (6/14/17) version of MATLAB function to detect and display warmnoses. Currently displays TvP, Tvz, and skew-T charts. See "to be added" section near end of help for features which will be added in the near future. Updated 6/14/17 to reflect the complete splitting of warmnose analysis duties to nosedetect, standardize funciton format, and fix freezing temperature.
 
+wnaltind: current (7/3/17) version of MATLAB function to create an altitude plot of an individual warmnose given an input date and sounding data structure. Currently under development.
+
 Nonfunctional:
 
 ESRLn: current (5/31/17) version of MATLAB function to replace IGRA geopotential height data with ESRL geopotential height data. ESRLn is not currently under development, as the geopotential height calculation in FWOKXh6, FWOKXh7, prestogeo, and simple_prestogeo is accurate enough that this does not need to be pursued as a high priority.
@@ -82,4 +82,4 @@ rangebartest: demonstration of how to make a ranged bar chart (as used in wnaltp
 
 Images folder:
 
-Now includes relevant images; currently (7/5/17) adding TvZ, RHvZ, and altitude plots for storm analysis. See Google Drive for more details.
+Now includes relevant images; currently (7/3/17) began adding TvZ, RHvZ, and altitude plots for storm analysis. See Google Drive for more details.
