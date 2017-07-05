@@ -1,4 +1,29 @@
 function [] = wnaltind(y,m,d,h,sounding)
+%%wnaltind
+    %function to display an altitude plot of an individual warmnose, given
+    %a date and a sounding structure containing warmnose information.
+    %
+    %General form: wnaltind(y,m,d,h,sounding)
+    %
+    %Outputs: none
+    %
+    %Inputs:
+    %y: year
+    %m: month
+    %d: day
+    %h: hour (always 00 or 12 for IGRA v1 data)
+    %sounding: a soundings data structure--must be processed for warmnoses
+    %
+    %Generates a single altitude plot for all warmnoses; also displays
+    %estimated cloud base.
+    %
+    %Version Date: 7/5/17
+    %Last Major Revision: 7/5/17
+    %Written by : Daniel Hueholt
+    %North Carolina State University
+    %Undergraduate Research Assistant at Environment Analytics
+    %
+
 
 [numdex] = findsnd(y,m,d,h,sounding); %find the index of the sounding for the input time
 
@@ -7,21 +32,24 @@ if ~exist('numdex','var') %if the index doesn't exist
 end
 
 numwarmnose = sounding(numdex).warmnose.numwarmnose; %find how many noses there are
-lb1 = sounding(numdex).warmnose.lowerboundg1; %there will always be a first warmnose
-d1 = sounding(numdex).warmnose.gdepth1; %first depth
+LowerBound1 = sounding(numdex).warmnose.lowerboundg1; %lower bound of first warmnose; there will always be a first warmnose
+Depth1 = sounding(numdex).warmnose.gdepth1; %first depth
+%populate other nose variables with
+LowerBound2 = NaN;
+Depth2 = NaN;
+LowerBound3 = NaN;
+Depth3 = NaN;
 if numwarmnose == 2
-    lb2 = sounding(numdex).warmnose.lowerboundg2; %second
-    d2 = sounding(numdex).warmnose.upperboundg2-lb2; %second depth
+    LowerBound2 = sounding(numdex).warmnose.lowerboundg2; %second
+    Depth2 = sounding(numdex).warmnose.upperboundg2-LowerBound2; %second depth
 elseif numwarmnose == 3
-    lb2 = sounding(numdex).warmnose.lowerboundg2; %second
-    d2 = sounding(numdex).warmnose.upperboundg2-lb2; %second depth
-    lb3 = sounding(numdex).warmnose.lowerboundg3; %third
-    d3 = sounding(numdex).warmnose.upperboundg3-lb3; %third depth
+    LowerBound2 = sounding(numdex).warmnose.lowerboundg2; %second
+    Depth2 = sounding(numdex).warmnose.upperboundg2-LowerBound2; %second depth
+    LowerBound3 = sounding(numdex).warmnose.lowerboundg3; %third
+    Depth3 = sounding(numdex).warmnose.upperboundg3-LowerBound3; %third depth
 end
 
-dateForBar = sounding(numdex).valid_date_num; %date entry is just date from sounding
-
-[LCL] = cloudbaseplot(sounding,numdex,0,0); %locate cloud base
+[LCL] = cloudbaseplot(sounding,numdex,0,0); %locate cloud base (if possible)
 try
     if isnan(LCL(2))~=1 %if the cloudbase exists
         cloudbase = LCL(2); %this is the cloud base in km
@@ -34,159 +62,52 @@ catch ME; %in case there's something REALLY weird
     disp('Cloud base calculation failed!')
 end
 
-%bounds for plotting cloud base as horizontal bar
-lhb = dateForBar-0.6; %left 
-rhb = dateForBar+0.6; %right
-
-date = [y m d h]; %for figures
-
 %% Plotting
-%%NOTE THIS DOESN'T WORK 
-figure(1); %altitude of warmnoses aloft vs observation time for input year
-bd1 = cat(2,lb1,d1);
-barWN = bar(sum(bd1))
-set(barWN,'EdgeColor','g','FaceColor','g')
-hold on
-barASFD = bar(bd1(1))
-set(barASFD,'EdgeColor','none','FaceColor','w')
-hold on
-bd2 = cat(2,lb2,d2)
-barWN2 = bar(sum(bd2))
-set(barWN2,'EdgeColor','b','FaceColor','b')
-hold on
-barQWR = bar(bd2(1))
-set(barQWR,'EdgeColor','none','FaceColor','w')
+figure(1); %altitude of warmnoses vs observation time for input year
+%Concatenate lower bounds and depths; this will be plotted on a stacked bar
+%
+%Does not care if some entries are NaN
+BoundDepth1 = cat(2,LowerBound1',Depth1');
+BoundDepth2 = cat(2,LowerBound2',Depth2');
+BoundDepth3 = cat(2,LowerBound3',Depth3');
 
-%%YOU'VE BEEN WORKING BETWEEN THE LAST DOUBLE PERCENT AND HERE
-set(barWN(1),'EdgeColor','none','FaceColor','w'); %change the color of the bar from 0 to min altitude to be invisible
-set(barWN(2),'EdgeColor','k','FaceColor','k');
+barBlank = bar([NaN;NaN]); %puts an invisible bar before the warm nose ranged graph, so that the data is plotted in the center of the figure (yeah, this is kind of a cheat)
 hold on
-if exist('lb2','var')
-    barWN2 = bar([cat(2,lb2,d2);NaN(1,2)],'stacked');
-    set(barWN2(1),'EdgeColor','none','FaceColor','w');
-    set(barWN2(2),'EdgeColor','b','FaceColor','b');
-    hold on
-end
-if exist('lb3','var')
-    barWN3 = bar([cat(2,lb3,d3);NaN(1,2)],'stacked');
-    set(barWN3(1),'EdgeColor','none','FaceColor','w');
-    set(barWN3(2),'EdgeColor','b','FaceColor','b');
-    hold on
-end
+barWN = bar([BoundDepth1 BoundDepth2 BoundDepth3;NaN(1,6)],'stacked','BarWidth',0.28); %bar data; the NaN(1,6) command is required for 'stacked' to operate on a single bar
+set(barWN(2),'DisplayName','Warm Nose') %this sets the text in the legend entry
+%set bars in between the noses to be invisible
+set(barWN(1),'EdgeColor','none','FaceColor','none'); %fun fact: none is actually a valid color
+set(barWN(3),'EdgeColor','none','FaceColor','none');
+set(barWN(5),'EdgeColor','none','FaceColor','none');
+%set noses to be a different color
+set(barWN(2),'EdgeColor','none','FaceColor','b');
+set(barWN(4),'EdgeColor','none','FaceColor','b');
+set(barWN(6),'EdgeColor','none','FaceColor','b');
+set(gca,'xtick',1) %set axis so there is only one tick mark
+hold on
+barBlank2 = bar([NaN;NaN]); %puts an invisible bar after the warm nose ranged graph, so that the data is plotted in the center of the figure (yeah, this is kind of a cheat)
+xlim([0 2]) %aesthetics
+ylim([0 6]) %noses are essentially never higher than 5km
+hold on
 if exist('cloudbase','var')
-    plot([cloudbase,cloudbase],'r','LineWidth',1.5) %plot cloudbase as a horizontal line
+    CBase = plot([0.7,1.3],[cloudbase cloudbase],'g','LineWidth',1.5,'DisplayName','Cloud Base') %plot cloudbase as a red horizontal line, with legend entry
 end
-ylim([0 5])
-line1 = ('Altitude of Warmnoses Aloft vs Sounding Date');
-dateString = num2str(date);
+line1 = ('Altitude of Warmnose(s) vs Sounding Date');
+date = [y m d h]; %for title and label
+dateString = num2str(date); %for title
 line2 = (['KOKX Soundings Data ' dateString]);
 lines = {line1,line2};
 title(lines)
 xlabel('Observation Time')
 ylabel('Height (km)')
-set(gca,'XMinorTick','on','YMinorTick','on')
-% datetickzoom('x',2,'keeplimits') %EXTERNAL FUNCTION - otherwise tick number is very inflexible
-% dcm_obj = datacursormode(figure(1));
-%     function [txt] = newtip(empt,event_obj)
-%         %%newtip
-%         % Customizes text of Data Cursor tooltips. This function should be nested
-%         % inside of another function; otherwise the only variables it can
-%         % access are empt and event_obj, which limits one's options to
-%         % basically zilch.
-%         %
-%         pos = get(event_obj,'Position'); %position has two values: one is maximum y value, one is the x value
-%         [dex] = find(dateForBar == pos(1)); %find the index corresponding to the datenumber; this is also the sounding's index in warmnosesfinal
-%         if pos(2)-soundings(dex).warmnose.upperg(1)<=0.0005 %the upper bound is either the first
-%             lowernum = pos(2)-soundings(dex).warmnose.gdepth1; %value of lower bound
-%         elseif pos(2)-soundings(dex).warmnose.upperg(2)<=0.0005 %second
-%             lowernum = pos(2)-soundings(dex).warmnose.gdepth2;
-%         elseif pos(2)-soundings(dex).warmnose.upperg(3)<=0.0005 %or third
-%             lowernum = pos(2)-soundings(dex).warmnose.gdepth3;
-%         else
-%             lowernum = 9999999; %go crazy
-%         end
-%         lowerstr = num2str(lowernum); %change to string
-%         txt = {['time: ',datestr(pos(1),'mm/dd/yy HH')],...
-%             ['Upper: ',num2str(pos(2))],['Lower: ',lowerstr]}; %this sets the tooltip format
-%     end
-% set(dcm_obj,'UpdateFcn',@newtip) %set the tooltips to use the newtip format
-% hold off
-% 
-% 
-% switch grounded %switch/case instead of if/elseif/else so adding new functionality later is easier
-%     case 1 %only show grounded plots if grounded = 1
-%         figure(2); %altitude of warmnoses grounded and aloft against observation time for input year
-%         barGN = bar(dateForBarY,cat(2,groundedyear',groundedDepthyear'),'stacked');
-%         set(barGN(1),'EdgeColor','none','FaceColor','w');
-%         set(barGN(2),'EdgeColor','g','FaceColor','g');
-%         hold on
-%         barGN2 = bar(dateForBarY,cat(2,groundedyear2',grounded2Depthyear'),'stacked');
-%         set(barGN2(1),'EdgeColor','none','FaceColor','w');
-%         set(barGN2(2),'EdgeColor','g','FaceColor','g');
-%         hold on
-%         barWN = bar(dateForBarY,cat(2,lbyear',boundsdepthyear'),'stacked'); %bar the dates vs the amalgamation of the lowerbounds and depth
-%         set(barWN(1),'EdgeColor','none','FaceColor','w'); %change the color of the bar from 0 to min altitude to be invisible
-%         set(barWN(2),'EdgeColor','b','FaceColor','b');
-%         hold on
-%         barWN2 = bar(dateForBarY,cat(2,lbyear2',boundsdepthyear2'),'stacked');
-%         set(barWN2(1),'EdgeColor','none','FaceColor','w');
-%         set(barWN2(2),'EdgeColor','b','FaceColor','b');
-%         hold on
-%         barWN3 = bar(dateForBarY,cat(2,lbyear3',boundsdepthyear3'),'stacked');
-%         set(barWN3(1),'EdgeColor','none','FaceColor','w');
-%         set(barWN3(2),'EdgeColor','b','FaceColor','b');
-%         ylim([0 5])
-%         line1 = ('Altitude of Warmnoses Aloft vs Sounding Date');
-%         yearstr = num2str(year);
-%         line2 = (['KOKX Soundings Data ' yearstr]);
-%         lines = {line1,line2};
-%         title(lines)
-%         xlabel('Observation Time (D/M/Y/H)')
-%         ylabel('Height (km)')
-%         set(gca,'XMinorTick','on','YMinorTick','on')
-%         set(gca,'XTick',dateForBarY) %set where XTicks are; make sure they're in the same place as the date information
-%         hold on
-%         for gg = 1:length(dateForBarY)
-%             plot([lhb(gg),rhb(gg)],[cloudbase(gg),cloudbase(gg)],'r','LineWidth',1.5) %plot cloudbase as a horizontal line
-%             hold on
-%         end
-%         for gg = 1:length(dateForBarY)
-%             plot([lhb(gg),rhb(gg)],[cloudbasealoft(gg),cloudbasealoft(gg)],'r','LineWidth',1.5) %plot cloudbase as a horizontal line
-%             hold on
-%         end
-%         datetickzoom('x',2) %EXTERNAL FUNCTION - otherwise tick number is very inflexible
-%         dcm_obj = datacursormode(figure(2));
-%         set(dcm_obj,'UpdateFcn',@newtip) %set the tooltips to use the newtip format
-%         
-%         figure(3); %altitude of grounded warmnoses vs observation time for input year
-%         barGN = bar(dateForBarY,cat(2,groundedyear',groundedDepthyear'),'stacked');
-%         set(barGN(1),'EdgeColor','none','FaceColor','w');
-%         set(barGN(2),'EdgeColor','g','FaceColor','g');
-%         hold on
-%         barGN2 = bar(dateForBarY,cat(2,groundedyear2',grounded2Depthyear'),'stacked');
-%         set(barGN2(1),'EdgeColor','none','FaceColor','w');
-%         set(barGN2(2),'EdgeColor','g','FaceColor','g');
-%         hold on
-%         for gg = 1:length(dateForBarY)
-%             plot([lhb(gg),rhb(gg)],[cloudbase(gg),cloudbase(gg)],'-r','LineWidth',1.5) %plot cloudbase as a horizontal line
-%             hold on
-%         end
-%         ylim([0 5])
-%         line1 = ('Altitude of Grounded Warmnoses vs Sounding Date');
-%         yearstr = num2str(year);
-%         line2 = (['KOKX Soundings Data ' yearstr]);
-%         lines = {line1,line2};
-%         title(lines)
-%         xlabel('Obsevation Time (D/M/Y/H)')
-%         ylabel('Height (km)')
-%         set(gca,'XMinorTick','on','YMinorTick','on')
-%         set(gca,'XTick',dateForBarY) %set where XTicks are; make sure they're in the same place as the date information
-%         datetickzoom('x',2) %EXTERNAL FUNCTION - otherwise tick number is very inflexible
-%         dcm_obj = datacursormode(figure(3));
-%         set(dcm_obj,'UpdateFcn',@newtip) %set the tooltips to use the newtip format
-%     otherwise
-%         disp('Grounded warmnoses were not plotted')
-%         return
-% end
+set(gca,'YMinorTick','on')
+set(gca,'XTickLabel',dateString)
+set(gca,'box','off') %disable Y tick marks on right side of figure
+if exist('cloudbase','var') %check whether cloud base exists before creating legend
+    legend([barWN(2),CBase]) %if there is a cloud, it deserves a legend entry
+else
+    legend(barWN(2)) %otherwise no
+end
+
 
 end
