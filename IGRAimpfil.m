@@ -67,7 +67,7 @@ surfcon.temp = 6;
 disp('Quality control complete! 4/5')
 
 disp('Detecting warmnoses - please be patient!')
-[~,~,~,warmnosesfinal,nowarmnosesfinal,~,~,~,~,~,~,~,~] = nosedetect(goodfinal,1,length(goodfinal),0.5,20000);
+[~,~,~,warmnosesfinal,nowarmnosesfinal,~,~,~,~,~,~,~,~] = nosedetect(goodfinal,1,length(goodfinal),0,20000);
 
 switch nargin
     case 2
