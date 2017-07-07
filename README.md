@@ -19,7 +19,7 @@ FWOKXskew: current (6/14/17) version of MATLAB function to create a skew-T chart
 
 IGRAimpf: current (6/14/17) version of MATLAB function to create a structure of soundings data from raw Integrated Global Radiosonde Archive v1 .dat data. (Based on a function originally written by Megan Amanatides at NC State.) Updated 6/14/17 to standardize the function help format.
 
-IGRAimpfil: current (6/30/17) version of MATLAB function to import IGRA v1 data and output ALL useful sounding structures (filtered, goodfinal, and warmnosesfinal being the most important). Updated 6/30/17 to add support for precipfilter.
+IGRAimpfil: current (7/7/17) version of MATLAB function to import IGRA v1 data and output ALL useful sounding structures (filtered, goodfinal, and warmnosesfinal being the most important). Updated 7/6/17 to fix the wrong freezing point input within nosedetect.
 
 levfilters: current (6/13/17) version of MATLAB function to filter out given level types from IGRA v1 soundings data. Updated 6/13/17 to standardize help format and reflect changes in other functions.
 
@@ -60,11 +60,15 @@ In progress:
 
 ASOSdecoder: current (7/5/17) version of MATLAB function to decode present weather codes from the ASOS one minute dataset. Currently nonfunctional because the proper format for decoding these conditions is still unknown.
 
+ASOSimport: current (7/6/17) version of MATLAB function to import and create a structure of ASOS 1-minute data. Functional but largely untested.
+
 atplot: currently (6/8/17) just a grab bag of plotting loops, originally from FWOKXh7. May be removed eventually, but currently serves as a testing ground for improvements and functionalizations of the remaining plotting sections of FWOKXh7.
 
 convection: current (5/31/17) version of MATLAB function to find relevant meteorological variables necessary to calculate basic properties relevant to convection and stability. Currently just a skeleton of code from Megan Amanatides's original script.
 
 noseplotfind: current (6/14/17) version of MATLAB function to detect and display warmnoses. Currently displays TvP, Tvz, and skew-T charts. See "to be added" section near end of help for features which will be added in the near future. Updated 6/14/17 to reflect the complete splitting of warmnose analysis duties to nosedetect, standardize funciton format, and fix freezing temperature.
+
+TvZ: current (7/7/17) version of MATLAB function to simply plot TvZ graph for soundings temperature profile. Currently under construction.
 
 Nonfunctional:
 
@@ -82,4 +86,4 @@ rangebartest: demonstration of how to make a ranged bar chart (as used in wnaltp
 
 Images folder:
 
-Now includes relevant images; currently (7/5/17) adding TvZ, RHvZ, and altitude plots for storm analysis. See Google Drive for more details.
+Now includes relevant images; currently (7/7/17) adding TvZ, RHvZ, and altitude plots for storm analysis. See Google Drive for more details.
