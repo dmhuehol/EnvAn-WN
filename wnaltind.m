@@ -59,7 +59,7 @@ try
         disp('Cloud base calculation failed!')
     end
 catch ME; %in case there's something REALLY weird
-    disp('Cloud base calculation failed!')
+    disp('Cloud base calculation failed DRAMATICALLY!')
 end
 
 %% Plotting
@@ -67,27 +67,31 @@ figure(1); %altitude of warmnoses vs observation time for input year
 %Concatenate lower bounds and depths; this will be plotted on a stacked bar
 %
 %Does not care if some entries are NaN
-BoundDepth1 = cat(2,LowerBound1',Depth1');
-BoundDepth2 = cat(2,LowerBound2',Depth2');
-BoundDepth3 = cat(2,LowerBound3',Depth3');
+BoundDepth1 = cat(2,LowerBound1,Depth1);
+BoundDepth2 = cat(2,LowerBound2,Depth2);
+BoundDepth3 = cat(2,LowerBound3,Depth3);
 
 barBlank = bar([NaN;NaN]); %puts an invisible bar before the warm nose ranged graph, so that the data is plotted in the center of the figure (yeah, this is kind of a cheat)
 hold on
-barWN = bar([BoundDepth1 BoundDepth2 BoundDepth3;NaN(1,6)],'stacked','BarWidth',0.28); %bar data; the NaN(1,6) command is required for 'stacked' to operate on a single bar
+barWN = bar([BoundDepth1; NaN(1,2)],'stacked','BarWidth',0.28); %bar data; the NaN part of this command is required for 'stacked' to operate on a single bar
+hold on
+barWN2 = bar([BoundDepth2; NaN(1,2)],'stacked','BarWidth',0.28);
+hold on
+barWN3 = bar([BoundDepth3; NaN(1,2)],'stacked','BarWidth',0.28);
 set(barWN(2),'DisplayName','Warm Nose') %this sets the text in the legend entry
 %set bars in between the noses to be invisible
 set(barWN(1),'EdgeColor','none','FaceColor','none'); %fun fact: none is actually a valid color
-set(barWN(3),'EdgeColor','none','FaceColor','none');
-set(barWN(5),'EdgeColor','none','FaceColor','none');
+set(barWN2(1),'EdgeColor','none','FaceColor','none');
+set(barWN3(1),'EdgeColor','none','FaceColor','none');
 %set noses to be a different color
 set(barWN(2),'EdgeColor','none','FaceColor','b');
-set(barWN(4),'EdgeColor','none','FaceColor','b');
-set(barWN(6),'EdgeColor','none','FaceColor','b');
+set(barWN2(2),'EdgeColor','none','FaceColor','b');
+set(barWN3(2),'EdgeColor','none','FaceColor','b');
 set(gca,'xtick',1) %set axis so there is only one tick mark
 hold on
 barBlank2 = bar([NaN;NaN]); %puts an invisible bar after the warm nose ranged graph, so that the data is plotted in the center of the figure (yeah, this is kind of a cheat)
 xlim([0 2]) %aesthetics
-ylim([0 6]) %noses are essentially never higher than 5km
+ylim([0 5]) %noses are essentially never higher than 5km
 hold on
 if exist('cloudbase','var')
     CBase = plot([0.7,1.3],[cloudbase cloudbase],'g','LineWidth',1.5,'DisplayName','Cloud Base') %plot cloudbase as a red horizontal line, with legend entry

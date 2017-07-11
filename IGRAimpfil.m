@@ -8,7 +8,7 @@ function [sndng,filtered,soundsh,goodfinal,warmnosesfinal,nowarmnosesfinal,wnout
     %this ideal for further investigation using functions like soundplots.
     %
     %General form:
-    %[sndng,filtered,soundsh,goodfinal,warmnosesfinal,nowarmnosesfinal,wnoutput] = IGRAimpfil(input_file)
+    %[sndng,filtered,soundsh,goodfinal,warmnosesfinal,nowarmnosesfinal,wnoutput] = IGRAimpfil(input_file,input_file_meso)
     %
     %Outputs:
     %sndng - raw soundings data read into MATLAB and separated into different
