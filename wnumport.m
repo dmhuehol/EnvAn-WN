@@ -1,40 +1,50 @@
-%wnumport - function to process surface observation data from the Mesowest
-%dataset. Given a csv data file from Mesowest (usually covering a span of 1
-%month to 1 year), the function will create a data array containing the
-%time (month, day, year, hour, minute) of the observation and the
-%associated weather condition codes, temperature, dewpoint, relative
-%humidity, wind speed, wind direction, pressure, and 1-hour precipitation
-%totals. If todecode input is 1, the weather condition codes are decoded
-%and added to the end of the table.
-%This function will only work if the data has been downloaded with Temperature, 
-%Dew Point, Relative Humidity, Wind Speed, Wind Direction, Pressure, 
-%Precipitation 1hr, and Weather Conditions fields.
-%
-%General form: [dat,decoded] = wnumport(input_file,todecode)
-%
-%Outputs
-%dat: output table with data
-%decoded: decoded weather condition codes
-%
-%Inputs
-%input_file: file path to Mesowest csv data file
-%todecode: input as 1 or 0--1 will cause the function to decode the weather
-%conditions, 0 will leave them as numerical codes
-%
-%Written by: Daniel Hueholt
-%Version date: 5/25/2017
-
 function [dat,decoded] = wnumport(input_file,todecode)
+%%wnumport
+    %Function to process surface observation data from the Mesowest
+    %dataset. Given a csv data file from Mesowest (usually covering a span of 1
+    %month to 1 year), the function will create a data array containing the
+    %time (month, day, year, hour, minute) of the observation and the
+    %associated weather condition codes, temperature, dewpoint, relative
+    %humidity, wind speed, wind direction, pressure, and 1-hour precipitation
+    %totals. If todecode input is 1, the weather condition codes are decoded
+    %and added to the end of the table.
+    %This function will only work if the data has been downloaded with Temperature, 
+    %Dew Point, Relative Humidity, Wind Speed, Wind Direction, Pressure, 
+    %Precipitation 1hr, and Weather Conditions fields.
+    %
+    %General form: [dat,decoded] = wnumport(input_file,todecode)
+    %
+    %Outputs
+    %dat: output table with data
+    %decoded: decoded weather condition codes
+    %
+    %Inputs
+    %input_file: file path to Mesowest csv data file
+    %todecode: input as 1 or 0--1 will cause the function to decode the weather
+    %conditions, 0 will leave them as numerical codes
+    %
+    %Written by: Daniel Hueholt
+    %North Carolina State University
+    %Undergraduate Research Assistant at Environment Analytics
+    %Version date: 8/28/2017
+    %Last major revision: 5/31/17
+    %
+    %See also surfconfind
+    %
 
 %% File import
-da = readtable(input_file,'HeaderLines',7); %import csv data file
+if ~exist('todecode','var')
+    todecode = 0;
+end
+
+da = readtable(input_file,'HeaderLines',7); %Import csv data file
 try
-    warning('off','MATLAB:table:ModifiedVarNames'); %disable MATLAB's warning about modified variable names
-catch ME
+    warning('off','MATLAB:table:ModifiedVarNames'); %Disable MATLAB's warning about modified variable names
+catch ME;
 end
 
 %% Data processing
-%Select times, convert from cells into matrix, convert to double using
+% Select times, convert from cells into matrix, convert to double using
 %fastest possible method.
 month = sscanf(cell2mat(cellfun(@(c) c(1:2),da{:,2},'UniformOutput',false))','%2f');
 day = sscanf(cell2mat(cellfun(@(c) c(4:5),da{:,2},'UniformOutput',false))','%2f');
@@ -42,7 +52,7 @@ year = sscanf(cell2mat(cellfun(@(c) c(7:10),da{:,2},'UniformOutput',false))','%4
 hour = sscanf(cell2mat(cellfun(@(c) c(12:13),da{:,2},'UniformOutput',false))','%2f');
 minute = sscanf(cell2mat(cellfun(@(c) c(15:16),da{:,2},'UniformOutput',false))','%2f');
 
-%Select and convert surface conditions other than weather codes
+% Select and convert surface conditions other than weather codes
 pressureHg = da{:,3}; %pressure in inches mercury
 pressurePa = da{:,3}*3386.38816; %pressure converted to Pascal
 tempF = da{:,4}; %temperature in deg F
@@ -54,7 +64,7 @@ wdir = da{:,7}; %wind direction in angular degrees
 hrpre = da{:,9}; %one-hour precipitation total in inches
 dew = da{:,10}; %dewpoint in deg F
 
-%Process weather codes
+% Process weather codes
 wnum = da{:,8}; %eighth column is weather conditions
 con = {month;day;year;hour;minute;wnum;pressurePa;tempC;dew;rhum;wspdmps;wdir;hrpre}; %combine all data into a single cell array
 
@@ -67,42 +77,42 @@ con = {month;day;year;hour;minute;wnum;pressurePa;tempC;dew;rhum;wspdmps;wdir;hr
 %three conditions
 %There is a fourth option: the weather code is frequently NaN. In this
 %case, the conditions were not reported. NaN is decoded by wnumport as "No reading."
-[nindex] = find(isnan(wnum)==1); %find indices where the readings were NaN
-[rindex] = find(wnum<80); %find indices with weather codes less than 80
-[r2index] = find(wnum>=80); %find indices with weather codes greater than or equal to 80
-[r3index] = find(wnum>6399); %find indices with weather codes greater than 6399
-[oin,oinr2,oinr3] = intersect(r2index,r3index); %find the overlap of greater than or equal to 80 and greater than 6399
-r2index(oinr2) = []; %destroy said overlap - this prevents the presence of codes greater than 6399 in the greater than or equal to 80 code array
+[nindex] = find(isnan(wnum)==1); %Find indices where the readings were NaN
+[rindex] = find(wnum<80); %Find indices with weather codes less than 80
+[r2index] = find(wnum>=80); %Find indices with weather codes greater than or equal to 80
+[r3index] = find(wnum>6399); %Find indices with weather codes greater than 6399
+[oin,oinr2,oinr3] = intersect(r2index,r3index); %Find the overlap of greater than or equal to 80 and greater than 6399
+r2index(oinr2) = []; %Destroy said overlap - this prevents the presence of codes greater than 6399 in the greater than or equal to 80 code array
 
-%all operations come from Mesowest's online documentation
-dcode = wnum(r2index); %select all two-condition codes
+% All operations come from Mesowest's online documentation
+dcode = wnum(r2index); %Select all two-condition codes
 dcode1 = floor(dcode/80); %this is the first condition
 dcode2 = dcode-dcode1*80; %this is the second condition
 dcoded = horzcat(dcode1,dcode2); %concatenate into an rx2 array
 
-tcode = wnum(r3index); %select all three-condition codes
+tcode = wnum(r3index); %Select all three-condition codes
 tcode1 = floor(tcode/6400); %this is the first condition
 tcode2 = floor((tcode-tcode1*6400)/80); %this is the second condition
 tcode3 = tcode-tcode1*6400-tcode2*80; %this is the third condition
 tcoded = horzcat(tcode1,tcode2,tcode3); %concatenate into an rx3 array
 
-[r,~] = size(wnum); %how many observations are there
+[r,~] = size(wnum); %How many observations are there
 con{6} = Inf(r,3); %Inf instead of NaN to distinguish between missing data and fields that were unfilled (e.g. because only one condition was present)
-con{6}(nindex,1) = NaN; %fill with NaNs as appropriate
+con{6}(nindex,1) = NaN; %Fill with NaNs as appropriate
 con{6}(rindex,1) = wnum(rindex); %fill with one-conditions as appropriate
 con{6}(r2index,1:2) = dcoded; %fill with two-conditions as appropriate
 con{6}(r3index,1:3) = tcoded; %fill with three-conditions as appropriate
 
 %% Create output
 VariableNames = {'Month' 'Day' 'Year' 'Hour' 'Minute' 'WxCode' 'Pressure' 'Temperature' 'Dewpoint' 'RHumidity' 'WindSpeed' 'WindDir' 'HrPrecip'}; %will become column names in output table
-st = cell2struct(con,VariableNames,1); %fastest way to make the correct dimensions and column names of table
+st = cell2struct(con,VariableNames,1); %Fastest way to make the correct dimensions and column names of table
 dat = struct2table(st); %output
 
 %% Decode weather conditions
-willdecode = con{6}; %weather condition codes to be decoded
-decoded = cell(r,3); %blank cell array to contain weather condition codes
-if todecode==1 %input if user wants the codes to be decoded
-    for dc = 1:3 %loop through all columns
+willdecode = con{6}; %Weather condition codes to be decoded
+decoded = cell(r,3); %Blank cell array to contain weather condition codes
+if todecode==1 %Input if user wants the codes to be decoded
+    for dc = 1:3 %Loop through all columns
         for dr = 1:r %and all rows
             %Following code is a replication of the table in online
             %Mesowest documentation. Blank entries on table (e.g. for code
@@ -278,18 +288,13 @@ if todecode==1 %input if user wants the codes to be decoded
             end
         end
     end
-    dat.Decoded = decoded; %add decoded conditions to the output array
+    dat.Decoded = decoded; %Add decoded conditions to the output array
 elseif todecode == 0
-    suppressant = 'shh'; %do nothing
-elseif ~exist(todecode) %if todecode hasn't been entered
-    disp('todecode must be 1 or 0') %there are only two options
+    %do nothing
+elseif ~exist(todecode) %If todecode hasn't been entered
+    disp('todecode must be 1 or 0') %There are only two options
 end
+dat.valid_date_num = [dat.Year,dat.Month,dat.Day,dat.Hour];
 
 end
-
-
-
-
-
-
 
