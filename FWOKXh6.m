@@ -4,6 +4,7 @@
 %IS NO LONGER USABLE. Will be kept around just in case the untouched
 %plotting sections are helpful later on, but will be removed in the
 %not-too-distant future.
+%NOTE 8/4/17: The FWOKXh line will be removed in the following push.
 %
 %Based on the "FIND_WarmnoseOKX" script originally created by Megan
 %Amanatides, this script uses soundings data to identify profiles with
@@ -11,7 +12,8 @@
 %pressure and temperature v height space. Additionally, it processes
 %surface conditions data which can be used to reference surface
 %conditions with the corresponding soundings data.
-%Version: 5/26/17 OBSOLETE 6/29/17
+%DEPRECATED: 6/29/17
+%Version: 5/26/17
 %Written by: Daniel Hueholt (based on a script by Megan Amanatides)
 %
 %See also: IGRAimpf, dewrelh, findsnd, levfilters, SkewT, soundplots,

@@ -1,0 +1,44 @@
+IGRA toolbox: Functions to import Integrated Global Radiosonde Archive v1 data into MATLAB and filter it into various structures with an eye towards warm nose analysis.
+dewrelh
+findsnd
+fullIGRAimp
+IGRAimpf
+levfilter
+nosedetect
+precipfilter
+prestogeo
+simple_prestogeo
+surfconfilter
+timefilter
+wnumport
+
+Plotting toolbox: Functions to plot soundings data which has already been imported into MATLAB.
+cloudbaseplot
+dewrelh
+findsnd
+rhumplot
+skewT
+soundplots
+TvZ
+
+Warm Nose toolbox: MATLAB code to visualize and analyze warm noses from warm nose soundings which have already been imported.
+datetickzoom - written by Christophe Lauwerys
+findsnd
+newtip
+numwarmnose
+wnAllPlot
+wnplot
+wnYearPlot
+
+Mesowest toolbox: MATLAB code to import and easily access surface conditions data from the Mesowest archive.
+mesowestDecoder
+surfconfind
+wnumport
+
+Utilities: various MATLAB functions and scripts which are broadly useful beyond warm nose and soundings analysis.
+datetickzoom - written by Christophe Lauwerys
+newtip
+rangebardemo - section 1 written by Dr. Matthew Miller
+simple_prestogeo
+
+The IGRA, Plotting, and Warm Nose toolboxes are sufficient to replicate all of the work I did in summer 2017.

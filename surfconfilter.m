@@ -1,6 +1,6 @@
 function [gooddays,goodfinal] = surfconfilter(soundsh,surfcon)
 %%surfconfilter
-    %function to filter a soundings data structure based on the surface
+    %Function to filter a soundings data structure based on the surface
     %temperature and relative humidity. Useful to narrow down soundings to
     %those with precipitation at the surface, or those near freezing.
     %
@@ -23,8 +23,10 @@ function [gooddays,goodfinal] = surfconfilter(soundsh,surfcon)
     %
     %To filter by time, see timefilter. To filter by level type, see
     %levfilters.
+    %In the future, filtration by surface precipitation and cloud base will be added to
+    %this.
     %
-    %Version date: 6/29/17
+    %Version date: 9/3/17
     %Last major revision: 5/31/17
     %Based on a section of a script originally written by Megan Amanatides at
     %NC State
@@ -32,52 +34,51 @@ function [gooddays,goodfinal] = surfconfilter(soundsh,surfcon)
     %North Carolina State University
     %Undergraduate Research Assistant at Environment Analytics
     %
-    %See also IGRAimpf, levfilters, timefilter, IGRAimpf
+    %See also fullIGRAimp, levfilters, timefilter, IGRAimpf
     %
 
-%for notices in case of missing surfcon settings
-check(1,1) = 1;
-check(1,2) = 1;
+% For notices in case of missing surfcon settings
+check = ones(1,2);
 
-%preallocate arrays for later in the function
-cold = zeros(length(soundsh),1); %will specify values cold enough
-moist = zeros(length(soundsh),1); %will specify values moist enough
+% Preallocate arrays for later in the function
+cold = zeros(length(soundsh),1); %Will specify values cold enough
+moist = zeros(length(soundsh),1); %Will specify values moist enough
 
-%check values in the structure against surface condition filter settings
-%nested structures mean it's time to get loopy
-for d = 1:length(soundsh) %loop through sounding
-    if ~ isempty(soundsh(d)) %if soundsh(d) is occupied
-        if ismember('temp',fieldnames(surfcon))==1 %check if temperature filtration was requested
-            if ((soundsh(d).temp(1) <= surfcon.temp)  && (soundsh(d).temp(2) <= surfcon.temp) && (soundsh(d).temp(3) <= surfcon.temp)) %first three temperature values are taken as "surface temperature"
-                cold(d) = 1; %add entry in logical for final filtration
+% Check values in the structure against surface condition filter settings
+% Nested structures mean it's time to get loopy
+for d = 1:length(soundsh) %Loop through sounding data
+    if ~ isempty(soundsh(d)) %If soundsh(d) is occupied
+        if ismember('temp',fieldnames(surfcon))==1 %Check if temperature filtration was requested
+            if ((soundsh(d).temp(1) <= surfcon.temp)  && (soundsh(d).temp(2) <= surfcon.temp) && (soundsh(d).temp(3) <= surfcon.temp)) %First three temperature values are taken as "surface temperature"
+                cold(d) = 1; %Add entry in logical for final filtration
             end
-        elseif ismember('temperature',fieldnames(surfcon))==1 %include functionality for the most obvious mistake in the world
-            if ((soundsh(d).temp(1) <= surfcon.temperature)  && (soundsh(d).temp(2) <= surfcon.temperature) && (soundsh(d).temp(3) <= surfcon.temperature)) %first three temperature values are taken as "surface temperature"
-                cold(d) = 1; %add entry in logical for final filtration
+        elseif ismember('temperature',fieldnames(surfcon))==1 %Include functionality for the most obvious mistake in the world
+            if ((soundsh(d).temp(1) <= surfcon.temperature)  && (soundsh(d).temp(2) <= surfcon.temperature) && (soundsh(d).temp(3) <= surfcon.temperature)) %First three temperature values are taken as "surface temperature"
+                cold(d) = 1; %Add entry in logical for final filtration
             end
         else
-            if check(1,1) == 1 %this message should only appear once, not soundsh number of times
+            if check(1,1) == 1 %This message should only appear once, not soundsh number of times
                 disp('No temperature filtration was applied')
                 check(1,1) = 0;
             end
-           cold(d) = 1; %add entry in logical for final filtration
+           cold(d) = 1; %Add entry in logical for final filtration
         end
         if ismember('relative_humidity',fieldnames(surfcon))==1
             if ((soundsh(d).rhum(1) >= surfcon.relative_humidity)  && (soundsh(d).rhum(2) >= surfcon.relative_humidity) && (soundsh(d).rhum(3) >= surfcon.relative_humidity)) %first three relative humidity values are taken as "surface relative humidity"
-                moist(d) = 1; %add entry in logical for final filtration
+                moist(d) = 1; %Add entry in logical for final filtration
             end
         else
-            if check(1,2) == 1 %this message should only display once
+            if check(1,2) == 1 %This message should only display once
                 disp('No relative humidity filter was applied.')
                 check(1,2) = 0;
             end
-            moist(d) = 1; %add entry in logical for final filtration
+            moist(d) = 1; %Add entry in logical for final filtration
         end
     end
 end
 
-%creation of new structure containing only the filtered data
-gooddays = and(logical(cold), logical(moist)); %merge the logicals of cold and moist-filtered data
-goodfinal = soundsh(gooddays); %output
+% Creation of new structure containing only the filtered data
+gooddays = and(logical(cold), logical(moist)); %Merge the logicals of cold and moist-filtered data
+goodfinal = soundsh(gooddays); %This is the output structure
 
 end

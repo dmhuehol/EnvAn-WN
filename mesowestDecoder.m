@@ -1,5 +1,27 @@
-function [split,decoded] = ASOSdecoder(tcode)
-%if tcode>
+%%mesowestDecoder
+    %This function is simply the decoding section of wnumport, split off
+    %into its own function. It translates a given Mesowest code into
+    %individual codes and descriptions, as described by the Mesowest
+    %documentation at:
+    %https://blog.synopticlabs.org/blog/2016/09/26/weather-condition-codes.html
+    %
+    %General form: [split,decoded] = mesowestDecoder(tcode)
+    %
+    %Outputs:
+    %split: the combined code split into up to three individual condition codes
+    %decoded: the English translations of the condition codes
+    %
+    %Input:
+    %tcode: a single Mesowest weather condition code
+    %
+    %Version date: 8/4/17
+    %Last major update: 8/4/17
+    %Written by: Daniel Hueholt
+    %North Carolina State University
+    %Undergraduate Research Assistant at Environment Analytics
+    %
+
+function [split,decoded] = mesowestDecoder(tcode)
 tcode1 = floor(tcode/6400); %this is the first condition
 tcode2 = floor((tcode-tcode1*6400)/80); %this is the second condition
 tcode3 = tcode-tcode1*6400-tcode2*80; %this is the third condition

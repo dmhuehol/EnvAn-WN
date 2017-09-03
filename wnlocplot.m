@@ -2,6 +2,9 @@
     %NOTE: THIS FUNCTION IS DEFUNCT AS OF 6/12/17. SEE wnaltplot OR
     %wnaltyearplot FOR CURRENT VERSIONS.
     %
+    %NOTE 8/28/17: THIS FUNCTION WILL BE REMOVED IN THE NEXT PUSH, BEFORE
+    %THE END OF 8/2017
+    %
     %function to make plots of the vertical location of warmnoses
     %aloft in the atmosphere. Produces figures for individual warmnoses aloft (first,
     %second, third), all warmnoses aloft (stacked as in reality), all warmnoses

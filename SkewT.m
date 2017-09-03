@@ -1,28 +1,47 @@
-function [f9] = SkewT(RELH,TEMP,PRES)
-%% SkewT
-%Function to create a skew-T graph when given column vectors of relative
-%humidity, temperature, and pressure.
-%
-%General form: [f9] = SkewT(RELH,TEMP,PRES)
-%RELH is humidity data in percent, TEMP is temperature in deg C, and PRES
-%is pressure in hPa.
-%All other variables are calculated within the function.
-%
-%Written by: Daniel Hueholt
-%North Carolina State University
-%Undergraduate Research Assistant at Environment Analytics
-%Adapted from code found on MIT Open Courseware, ocw.mit.edu
-%Version date: 6/14/17
-%Last major revision: 5/24/17
+function [f] = skewT(RELH,TEMP,PRES,DEW)
+%%skewT
+    %Function to create a skew-T graph when given column vectors of relative
+    %humidity, temperature, and pressure.
+    %
+    %General form: [f] = FWOKXskew(RELH,TEMP,PRES,DEW)
+    %
+    %Outputs: f is the figure handle for the skew-T chart
+    %Inputs: RELH is humidity data in percent, TEMP is temperature in deg C, PRES
+    %is pressure in Pa, and DEW is dewpoint in deg C
+    %All other thermodynamic variables needed are calculated within the
+    %function. Additionally, units are adjusted from the above as necessary
+    %within the function.
+    %
+    %Description of graph:
+    %solid black line: measured temperature profile, deg C
+    %dashed black line: measured dewpoint profile, deg C
+    %horizontal thin dashed line: isobars (lines of constant pressure)
+    %solid black line slanted right: isotherms (lines of constant temperature)
+    %solid magenta line slanted right: freezing isotherm (line of 0 deg C temperature)
+    %blue curved line: dry adiabat (lines of constant potential temperature)
+    %red curved line: saturated adiabat (lines of constant potential temperature)
+    %green slanted line: isohume (lines of constant mixing ratio)
+    %
+    %KNOWN PROBLEM: the isotherms do not perfectly line up with the
+    %rWecorded temperatures on IGRA soundings, and are usually located ~+2
+    %degrees C. This will be fixed eventually, but is not a high priority
+    %since skew-T charts are not especially important for warm nose analysis.
+    %
+    %Written by: Daniel Hueholt
+    %Adapted from code found on MIT Open Courseware, ocw.mit.edu
+    %Version date: 8/4/17
+    %Last major revision: 5/24/17
+    %
 
-f9 = figure(9);
+PRES = PRES/100; %change Pa to hPa for charting
 RHUM = RELH./100; %express relative humidity as decimal instead of percentage
 ez=6.112.*exp(17.67.*TEMP./(243.5+TEMP)); %calculate saturation vapor pressure
 qz=RHUM.*0.622.*ez./(PRES-ez); %calculate saturation mixing ratio
-chi=log(PRES.*qz./(6.112.*(0.622+qz))); %calculate dewpoint
+chi= log(PRES.*qz./(6.112.*(0.622+qz))); %calculate dewpoint
 %
-tdz=243.5.*chi./(17.67-chi); %not sure what this line is for
+tdz=DEW; %243.5.*chi./(17.67-chi); %finish calculating dewpoint
 %
+f = figure(1234);
 p=[1050:-25:100]; %row vector for pressure
 pplot=transpose(p); %make that a column vector
 t0=[-48:2:50]; %row vector for temperature
@@ -58,9 +77,17 @@ h=contour(t0,pplot,thetae,24,'r'); %equivalent potential temperature lines
 %tsound=30.+43.5.*log(0.001.*p);
 %tsoundm=tsound-30.*log(0.001.*p);
 TEMPm=TEMP-30.*log(0.001.*PRES); %temperature adjusted for proper plotting
+temp0 = NaN(length(TEMPm'),1); %make a new column vector to be plotted
+temp0(:) = 1.9; %this is where the 0C line appears on the graph (it isn't zero because skew-Ts are strange ducks)
+temp0m = temp0-30.*log(0.001.*PRES); %adjust for proper plotting
 tdzm=tdz-30.*log(0.001.*PRES); %dewpoint adjusted for proper plotting
 h=plot(TEMPm,PRES,'k',tdzm,PRES,'k--'); %plot soundings data on skew T
-set(h,'linewidth',2) %set linewidth
+%h=plot(TEMPm,HE,'k',tdzm,HE,'k--'); %plot soundings data on skew T
+hold on
+h2 = plot(temp0m,PRES,'m'); %plot 0C isotherm in magenta
+%h2 = plot(temp0,HE,'m'); %plot 0C isotherm in magenta
+set(h,'linewidth',2) %bold the T and Td profiles
+set(h2,'linewidth',2) %also bold the 0C isotherm
 hold off
 xlabel('Temperature (C)') %label x axis
 ylabel('Pressure (mb)') %label y axis

@@ -1,9 +1,13 @@
-function [] = wnaltind(y,m,d,h,sounding)
-%%wnaltind
-    %function to display an altitude plot of an individual warmnose, given
-    %a date and a sounding structure containing warmnose information.
+function [] = wnplot_poster(y,m,d,h,sounding)
+%%wnplot_poster
+    %Function to display an altitude plot of an individual warmnose, given
+    %a date and a sounding structure containing warmnose information. The
+    %warm nose plot is generated with an eye towards being used on a
+    %poster. A better version of this program, which requires MATLAB 2014b,
+    %will be released shortly; therefore, wnplot_poster will be removed in
+    %the next push.
     %
-    %General form: wnaltind(y,m,d,h,sounding)
+    %General form: wnplot_poster(y,m,d,h,sounding)
     %
     %Outputs: none
     %
@@ -17,18 +21,17 @@ function [] = wnaltind(y,m,d,h,sounding)
     %Generates a single altitude plot for all warmnoses; also displays
     %estimated cloud base.
     %
-    %Version Date: 7/5/17
+    %Version Date: 8/24/17
     %Last Major Revision: 7/5/17
     %Written by : Daniel Hueholt
     %North Carolina State University
     %Undergraduate Research Assistant at Environment Analytics
     %
 
-
-[numdex] = findsnd(y,m,d,h,sounding); %find the index of the sounding for the input time
-
-if ~exist('numdex','var') %if the index doesn't exist
-    return %end the function; findsnd will take care of the warning message
+try %Embedded in try/catch in case the input time is not in the structure
+    [numdex] = findsnd(y,m,d,h,sounding); %find the index of the sounding for the input time
+catch ME; %#ok %If no sounding matches up to the input
+    return %end the function; findsnd has an appropriate command window statement.
 end
 
 numwarmnose = sounding(numdex).warmnose.numwarmnose; %find how many noses there are
@@ -49,19 +52,6 @@ elseif numwarmnose == 3
     Depth3 = sounding(numdex).warmnose.upperboundg3-LowerBound3; %third depth
 end
 
-[LCL] = cloudbaseplot(sounding,numdex,0,0); %locate cloud base (if possible)
-try
-    if isnan(LCL(2))~=1 %if the cloudbase exists
-        cloudbase = LCL(2); %this is the cloud base in km
-    elseif isnan(LCL(2))==1
-        %do nothing
-    else %in case there's something weird
-        disp('Cloud base calculation failed!')
-    end
-catch ME; %in case there's something REALLY weird
-    disp('Cloud base calculation failed DRAMATICALLY!')
-end
-
 %% Plotting
 figure(1); %altitude of warmnoses vs observation time for input year
 %Concatenate lower bounds and depths; this will be plotted on a stacked bar
@@ -71,8 +61,6 @@ BoundDepth1 = cat(2,LowerBound1,Depth1);
 BoundDepth2 = cat(2,LowerBound2,Depth2);
 BoundDepth3 = cat(2,LowerBound3,Depth3);
 
-barBlank = bar([NaN;NaN]); %puts an invisible bar before the warm nose ranged graph, so that the data is plotted in the center of the figure (yeah, this is kind of a cheat)
-hold on
 barWN = bar([BoundDepth1; NaN(1,2)],'stacked','BarWidth',0.28); %bar data; the NaN part of this command is required for 'stacked' to operate on a single bar
 hold on
 barWN2 = bar([BoundDepth2; NaN(1,2)],'stacked','BarWidth',0.28);
@@ -90,28 +78,20 @@ set(barWN3(2),'EdgeColor','none','FaceColor','b');
 set(gca,'xtick',1) %set axis so there is only one tick mark
 hold on
 barBlank2 = bar([NaN;NaN]); %puts an invisible bar after the warm nose ranged graph, so that the data is plotted in the center of the figure (yeah, this is kind of a cheat)
-xlim([0 2]) %aesthetics
+xlim([0.5 2]) %aesthetics
 ylim([0 5]) %noses are essentially never higher than 5km
 hold on
-if exist('cloudbase','var')
-    CBase = plot([0.7,1.3],[cloudbase cloudbase],'g','LineWidth',1.5,'DisplayName','Cloud Base') %plot cloudbase as a red horizontal line, with legend entry
-end
-line1 = ('Altitude of Warmnose(s) vs Sounding Date');
-date = [y m d h]; %for title and label
-dateString = num2str(date); %for title
-line2 = (['KOKX Soundings Data ' dateString]);
-lines = {line1,line2};
-title(lines)
-xlabel('Observation Time')
-ylabel('Height (km)')
+mn = 00;
+sc = 00;
+date = [y m d h mn sc]; %for title and label
+dateString = datestr(date,'mmm dd, yyyy HH'); %for title
+suffix = ' UTC';
+dateString = strcat(dateString,suffix);
+d = ylabel('Height (km)');
+set(d,'FontSize',14)
 set(gca,'YMinorTick','on')
 set(gca,'XTickLabel',dateString)
+set(gca,'FontSize',14)
 set(gca,'box','off') %disable Y tick marks on right side of figure
-if exist('cloudbase','var') %check whether cloud base exists before creating legend
-    legend([barWN(2),CBase]) %if there is a cloud, it deserves a legend entry
-else
-    legend(barWN(2)) %otherwise no
-end
-
 
 end

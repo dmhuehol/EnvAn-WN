@@ -1,10 +1,16 @@
 %% FWOKX
+%THE FWOKX LINE IS NO LONGER SUPPORTED. The move to functionize the warm
+%nose workflow is complete, and FWOKXh6 and FWOKXh7 are now officially
+%deprecated.
+%NOTE 9/1/17: The FWOKXh line will be removed in the following push.
+
 %Based on the "FIND_WarmnoseOKX" script originally created by Megan
 %Amanatides, this script uses soundings data to identify profiles with
 %"warm noses." It then visualizes the data in both temperature v
 %pressure and temperature v height space. Additionally, it processes
 %surface conditions data which can be used to reference surface
 %conditions with the corresponding soundings data.
+%DEPRECATED: 8/4/17
 %Version: 6/29/17
 %Last major edit: 5/31/17
 %Written by: Daniel Hueholt, North Carolina State University

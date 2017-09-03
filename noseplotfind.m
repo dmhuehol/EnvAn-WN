@@ -16,7 +16,7 @@ function [] = noseplotfind(soundstruct,first,last,newfig,skewT,freezeT,top)
     %newfig: controls whether plots are opened on individual figures or overwrite
     %   the previous figure. 0 for overwrite option, 1 for individual figures, all
     %   other options suppress plotting entirely.
-    %skewT: controls whether skewT chart is loaded. 0 or 1 will load skewT, all
+    %skewT: controls whether skewT chart is loaded. 1 will load skewT, all
     %   other options will suppress it.
     %freezeT: value of freezing line; when temperature profile crosses this line it
     %   is considered a warmnose. Default value is 0.
@@ -24,32 +24,33 @@ function [] = noseplotfind(soundstruct,first,last,newfig,skewT,freezeT,top)
     %   corresponds to a geopotential height of roughly 15km.)
     %
     %
-    %The biggest advantage of noseplotfind over soundplots is the stars on the
-    %plot which denote the presence of warmnoses, and the easy ability to plot 
-    %soundings for a span of time. soundplots is, however, easier to use for
-    %single soundings.
+    %noseplotfind is most appropriate for viewing a large number of
+    %soundings at once; basically, it's the best tool for getting the general
+    %feel of a soundings dataset. For individual soundings, it's much
+    %easier to use soundplots, TvZ, or wnplot.
     %
-    %Updated 6/14/17 to remove the data analysis functionality (splitting
-    %into warmnosesfinal and nowarmnosesfinal, etc) which has now been
-    %completely folded into nosedetect.
+    %For analysis of warm noses, see nosedetect.
     %
-    %Version Date: 6/14/17
-    %Last major edit: 6/14/17
+    %Version Date: 8/17/17
+    %Last major revision: 6/14/17
     %Written by: Daniel Hueholt
     %North Carolina State University
     %Undergraduate Research Assistant at Environment Analytics
     %To be added: rhumvP, rhumvz, skew-T new figure plotting, switch to control
     %presence of P subplot
+    %Note that the above features will likely be added in the relatively
+    %distant future--since this function is mostly useful in the early
+    %stages of dataset analysis, improving it is currently a low priority.
     %
     %See also: IGRAimpf, nosedetect, soundplots
     %
 
-%for creation of a freezing line in the plots (see within the loop)
+% For creation of a freezing line in the plots (see within the loop)
 if ~exist('freezeT','var')
-    freezeT = 0; %set default value of freezing temperature to 0 deg C
+    freezeT = 0; %Set default value of freezing temperature to 0 deg C
 end
 
-%to make running without entering all the inputs easier
+% To make running without entering all the inputs easier
 if ~exist('newfig','var')
     newfig = 0;
 end
@@ -57,8 +58,9 @@ if ~exist('skewT','var')
     skewT = -1;
 end
 
-freezingx = 0:1200;
-freezingxg = 0:16;
+% Define the freezing line
+freezingx = [0 1200]; %Two points to define a line
+freezingxg = [0 16]; %Two points to define a line
 freezingy = ones(1,length(freezingx)).*freezeT;
 freezingyg = ones(1,length(freezingxg)).*freezeT;
 
@@ -348,7 +350,7 @@ for e = first:last
         case 1
             [f9999] = FWOKXskew(soundstruct(e).rhum,soundstruct(e).temp,soundstruct(e).pressure,soundstruct(e).temp-soundstruct(e).dew_point_dep); %uncomment this line for skew-T plotting
         case 0
-            [f9999] = FWOKXskew(soundstruct(e).rhum,soundstruct(e).temp,soundstruct(e).pressure,soundstruct(e).temp-soundstruct(e).dew_point_dep); %uncomment this line for skew-T plotting
+            %Do nothing
         otherwise
             %disp('Skew-T plotting disabled!')
     end
